@@ -1,0 +1,447 @@
+/* =========================
+   MusicLeague — styles.css
+   (mettilo in /docs/styles.css)
+   ========================= */
+
+/* ---------- THEME ---------- */
+:root{
+  --bg:#0b0b10;
+  --card:#141421cc;
+  --border:#23233a;
+  --text:#ffffff;
+  --muted:#cfcfe6;
+  --muted2:#a7a7c7;
+
+  --btn:#2b2b45;
+  --btnHover:#3a3a5e;
+
+  --radius:22px;
+
+  --gold:#B8860B;
+  --silver:#C0C0C0;
+  --bronze:#8B4513;
+  --points:#ff4d5a;
+}
+
+*{ box-sizing:border-box; }
+
+html, body{ height:100%; }
+
+body{
+  margin:0;
+  font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+              "Segoe UI", Roboto, Arial, sans-serif;
+  color:var(--text);
+  background:var(--bg);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+a{ color:#9dd1ff; text-decoration:none; }
+a:hover{ text-decoration:underline; }
+
+/* ---------- SOFT BACKGROUND ---------- */
+.bg{
+  position:fixed;
+  inset:-40px;
+  background:
+    radial-gradient(900px 500px at 20% 15%, rgba(90,167,255,.22), transparent 60%),
+    radial-gradient(900px 500px at 85% 10%, rgba(123,123,255,.22), transparent 55%),
+    radial-gradient(900px 650px at 70% 75%, rgba(90,255,211,.10), transparent 60%),
+    radial-gradient(900px 650px at 10% 80%, rgba(255,90,199,.08), transparent 60%),
+    linear-gradient(180deg, rgba(255,255,255,.04), transparent 35%);
+  filter: blur(18px);
+  z-index:-2;
+}
+
+.wrap{
+  max-width:980px;
+  margin:0 auto;
+  padding:40px 20px;
+}
+
+/* ---------- CARD ---------- */
+.card{
+  background:var(--card);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:var(--radius);
+  padding:18px;
+  box-shadow:
+    0 20px 60px rgba(0,0,0,.45),
+    inset 0 1px 0 rgba(255,255,255,.08);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  margin-bottom:14px;
+}
+
+/* ---------- NAV PILLS ---------- */
+.navPills{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  justify-content:flex-start;
+  margin:0 0 12px 0;
+  flex-wrap:wrap;
+}
+
+.navPill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 12px;
+  border-radius:999px;
+  text-decoration:none;
+  font-size:13px;
+  font-weight:700;
+  color:rgba(255,255,255,.86);
+
+  background: rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  transition: transform .12s ease, background .12s ease, border-color .12s ease;
+}
+
+.navPill:hover{
+  transform: translateY(-1px);
+  background: rgba(255,255,255,.09);
+  border-color: rgba(255,255,255,.18);
+  text-decoration:none;
+}
+.navPill:active{ transform: translateY(0) scale(.99); }
+
+/* ---------- HEADER HERO (titolo + bottoni + immagine) ---------- */
+.headerHero{
+  background: rgba(22, 22, 34, .62);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 22px;
+  padding: 16px;
+  box-shadow: 0 18px 60px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.headerGrid{
+  display:grid;
+  grid-template-columns: 1fr auto;
+  gap:14px;
+  align-items:center;
+}
+
+.headerLeft{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:10px 10px 10px 12px;
+  text-align:center;
+}
+
+.headerTitleRow{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  margin-bottom:8px;
+}
+
+.headerAppIcon{
+  width:44px;height:44px;
+  border-radius:14px;
+  background: linear-gradient(135deg, rgba(90,200,250,.95), rgba(125,122,255,.95));
+  display:grid;
+  place-items:center;
+  box-shadow: 0 10px 26px rgba(0,0,0,.35);
+  flex:0 0 auto;
+}
+
+.headerAppIcon span{ font-size:20px; }
+
+.headerTitle{
+  margin:0;
+  font-size: 30px;
+  letter-spacing:-0.4px;
+}
+
+.headerSub{
+  margin:0 0 12px 0;
+  color: rgba(255,255,255,.72);
+  font-size: 14px;
+}
+
+.headerActions{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+/* bottoni icona */
+.iconBtn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  height: 46px;
+  padding: 0 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.14);
+  text-decoration:none;
+  font-weight: 800;
+  font-size: 14px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.35);
+  transition: transform .12s ease, filter .12s ease;
+  user-select:none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.iconBtn:hover{ transform: translateY(-1px); filter: brightness(1.04); text-decoration:none; }
+.iconBtn:active{ transform: translateY(0) scale(.99); }
+
+.iconBtn-spotify{
+  background: linear-gradient(135deg, rgba(30,215,96,.95), rgba(19,170,79,.95));
+  color:#0b0b10;
+}
+
+.iconBtn-form{
+  background: linear-gradient(135deg, rgba(90,200,250,.95), rgba(125,122,255,.95));
+  color:#fff;
+}
+
+.iconCircle{
+  width:30px;height:30px;
+  border-radius: 999px;
+  background: rgba(0,0,0,.22);
+  display:grid;
+  place-items:center;
+  font-size:16px;
+}
+
+.headerRight{
+  border-radius:18px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.18);
+
+  width:230px;
+  max-width:40vw;
+  height:170px;
+  max-height:170px;
+  justify-self:end;
+  align-self:center;
+}
+
+.headerRight img{
+  width:100%;
+  height:100%;
+  object-fit: cover;
+  display:block;
+  border-radius:18px;
+  filter: saturate(1.06) contrast(1.02);
+}
+
+@media (max-width: 720px){
+  .headerGrid{ grid-template-columns: 1fr; }
+  .headerRight{
+    width:100%;
+    max-width:100%;
+    height:150px;
+    max-height:150px;
+    justify-self:stretch;
+  }
+}
+
+/* ---------- BUTTONS ---------- */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  height:40px;
+  padding:0 14px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.12);
+  background: var(--btn);
+  color:#fff;
+  cursor:pointer;
+  user-select:none;
+}
+.btn:hover{ background: var(--btnHover); }
+
+/* ---------- TABLES (mobile-friendly: colonne strette + scroll orizzontale) ---------- */
+.tableWrap{
+  overflow-x:auto;
+  -webkit-overflow-scrolling: touch;
+  border:1px solid var(--border);
+  border-radius:12px;
+}
+
+/* IMPORTANTISSIMO:
+   - width:max-content => la tabella prende solo lo spazio del contenuto
+   - nowrap => niente a capo (meglio scroll orizzontale che righe alte)
+*/
+.tableWrap table{
+  width:max-content;
+  table-layout:auto;
+  border-collapse:collapse;
+  font-size:14px;
+  min-width: 0;
+}
+
+thead{ background:#10101a; }
+
+th, td{
+  padding:10px 12px;
+  text-align:left;
+  border-top:1px solid #23233a;
+  vertical-align:middle;
+  white-space:nowrap; /* ✅ NON va a capo */
+}
+
+th{ border-top:0; font-weight:800; }
+
+/* se vuoi “Rank” più stretta: */
+th:first-child, td:first-child{
+  width: 1%;
+}
+
+.hint{ color:var(--muted2); font-size:14px; }
+
+/* ---------- RANK BADGE ---------- */
+.rankBadge{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:10px;
+  font-weight:900;
+  min-width:40px;
+  text-align:center;
+}
+
+.rankGold{ background: var(--gold); color:#111; }
+.rankSilver{ background: var(--silver); color:#111; }
+.rankBronze{ background: var(--bronze); color:#fff; }
+
+.points{
+  color: var(--points);
+  font-weight:900;
+}
+
+/* ---------- OVERLAY FULLSCREEN ---------- */
+.overlay{
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.75);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:14px;
+  z-index:9999;
+}
+.overlay.open{ display:flex; }
+
+.overlay-card{
+  width:min(1100px, 100%);
+  height:min(90vh, 100%);
+  background:#141421;
+  border:1px solid #23233a;
+  border-radius:16px;
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+}
+
+.overlay-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:10px;
+}
+
+.overlay-title{ font-size:18px; font-weight:900; }
+
+.overlay-body{
+  flex:1;
+  overflow:auto;
+  border:1px solid #23233a;
+  border-radius:12px;
+}
+
+/* quando cloni una tabella dentro overlay */
+.fullscreenMode table{
+  width:max-content;
+  table-layout:auto;
+}
+.fullscreenMode th,
+.fullscreenMode td{
+  white-space:nowrap;
+}
+
+/* overlay: font/padding un filo più compatto */
+.overlay .fullscreenMode table{ font-size: 13px; }
+.overlay .fullscreenMode th,
+.overlay .fullscreenMode td{ padding: 8px 10px; }
+
+@media (max-width: 560px){
+  .headerTitle{ font-size:28px; }
+  .iconBtn{ min-width:100%; }
+  th, td{ padding:9px 10px; }
+  .overlay .fullscreenMode table{ font-size:12px; }
+}
+
+/* ---------- CARD USERS (più importante) ---------- */
+.card-users{
+  position: relative;
+  overflow: hidden;
+
+  border: 1px solid rgba(255,255,255,.16);
+  background: linear-gradient(135deg,
+    rgba(125,122,255,.14),
+    rgba(90,200,250,.10)
+  );
+
+  box-shadow:
+    0 22px 70px rgba(0,0,0,.60),
+    0 0 28px rgba(125,122,255,.14),
+    inset 0 1px 0 rgba(255,255,255,.10);
+}
+
+.card-users::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  background:
+    radial-gradient(500px 220px at 18% 20%, rgba(255,215,0,.14), transparent 60%),
+    radial-gradient(520px 260px at 75% 30%, rgba(125,122,255,.22), transparent 65%),
+    radial-gradient(520px 300px at 55% 95%, rgba(90,200,250,.14), transparent 60%);
+  pointer-events:none;
+  opacity:.95;
+}
+
+.card-users > *{ position:relative; }
+
+.card-users h2{
+  letter-spacing:.8px;
+  font-weight:900;
+  text-transform: uppercase;
+}
+
+.card-users h2::after{
+  content:" PRINCIPALE";
+  display:inline-block;
+  margin-left:10px;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:11px;
+  letter-spacing:.6px;
+  font-weight:800;
+  color: rgba(255,255,255,.92);
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.14);
+}
+
+/* opzionale: punti ancora più evidenti nella card users */
+.card-users .points{
+  color:#ff4d4d;
+  font-weight:900;
+}
