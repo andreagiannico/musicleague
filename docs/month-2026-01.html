@@ -684,6 +684,71 @@
     padding: 7px 8px !important;
   }
 }
+/* =========================
+   CLASSIFICA UTENTI (MAIN)
+   ========================= */
+.card-users{
+  position: relative;
+  overflow: hidden;
+
+  /* più “premium” rispetto alle altre */
+  border: 1px solid rgba(255,255,255,.16);
+  background: linear-gradient(135deg,
+    rgba(125,122,255,.14),
+    rgba(90,200,250,.10)
+  );
+
+  box-shadow:
+    0 22px 70px rgba(0,0,0,.60),
+    0 0 28px rgba(125,122,255,.14),
+    inset 0 1px 0 rgba(255,255,255,.10);
+}
+
+/* “glow” morbido dietro */
+.card-users::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  background:
+    radial-gradient(500px 220px at 18% 20%, rgba(255,215,0,.14), transparent 60%),
+    radial-gradient(520px 260px at 75% 30%, rgba(125,122,255,.22), transparent 65%),
+    radial-gradient(520px 300px at 55% 95%, rgba(90,200,250,.14), transparent 60%);
+  pointer-events:none;
+  opacity: .95;
+}
+
+/* Porta davanti il contenuto della card (sopra al glow) */
+.card-users > *{
+  position: relative;
+}
+
+/* Titolo più “importante” */
+.card-users h2{
+  letter-spacing: .8px; /* più “main” */
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+/* Piccolo badge “principale” accanto al titolo (senza cambiare HTML) */
+.card-users h2::after{
+  content:" PRINCIPALE";
+  display:inline-block;
+  margin-left:10px;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:11px;
+  letter-spacing:.6px;
+  font-weight:800;
+  color: rgba(255,255,255,.92);
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.14);
+}
+
+/* Punti più “in evidenza” solo qui (se vuoi) */
+.card-users .points{
+  color: #ff4d4d;           /* rosso più “vivo” */
+  font-weight: 900;
+}
 
 </style>
 
@@ -766,9 +831,9 @@
   <!-- CLASSIFICA MEDIA VOTI -->
   <div class="card">
     <h2 style="margin-top:0">📊 Classifica Media Voti</h2>
-	<div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 12px 0;">
-  <button class="btn" id="avgFullscreenBtn" type="button">🔍 Schermo intero</button>
-</div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 12px 0;">
+      <button class="btn" id="avgFullscreenBtn" type="button">🔍 Schermo intero</button>
+    </div>
 
     <div id="avgWrap" class="tableWrap">
       <table id="avgTable">
@@ -787,9 +852,33 @@
     <p id="avgStatus" class="hint" style="margin-top:10px;"></p>
   </div>
 
+  <!-- CLASSIFICA UTENTI (più importante) -->
+  <div class="card card-users">
+    <h2 style="margin-top:0">👤 CLASSIFICA UTENTI</h2>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 12px 0;">
+      <button class="btn" id="fullscreenUsersBtn" type="button">🔍 Schermo intero</button>
+    </div>
+
+    <div id="usersWrap" class="tableWrap">
+      <table id="usersTable">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Utente</th>
+            <th>Punti</th>
+          </tr>
+        </thead>
+        <tbody id="usersBody"></tbody>
+      </table>
+    </div>
+
+    <p id="usersStatus" class="hint" style="margin-top:10px;"></p>
+  </div>
+
 </div>
 
-<!-- Overlay full-screen per Top 10 -->
+<!-- Overlay full-screen (riutilizzato per tutte le tabelle) -->
 <div class="overlay" id="top10Overlay" aria-hidden="true">
   <div class="overlay-card">
     <div class="overlay-header">
@@ -801,13 +890,16 @@
 </div>
 
 
+
   <script>
   // === LINK (metti i tuoi) ===
   const PLAYLIST_LINK = "https://open.spotify.com/playlist/2BYzKSx4yyiBh8xts52cYE?si=PvAAK1LmRm6tzIeDqyQtPw&pi=ut_-EcNERZGQG";
   const FORM_LINK     = "https://forms.office.com/e/ukbeHJ3CHb";
 
-  document.getElementById("playlistBtn").href = PLAYLIST_LINK;
-  document.getElementById("formBtn").href = FORM_LINK;
+  const playlistBtnEl = document.getElementById("playlistBtn");
+  const formBtnEl     = document.getElementById("formBtn");
+  if (playlistBtnEl) playlistBtnEl.href = PLAYLIST_LINK;
+  if (formBtnEl)     formBtnEl.href     = FORM_LINK;
 
   // === HELPERS ===
   function escapeHtml(s) {
@@ -818,9 +910,11 @@
 
   // parser robusto: prova ; poi TAB poi ,
   function splitLine(line) {
-    if (line.includes(";")) return line.split(";");
-    if (line.includes("\t")) return line.split("\t");
-    return line.split(",");
+    let parts;
+    if (line.includes(";")) parts = line.split(";");
+    else if (line.includes("\t")) parts = line.split("\t");
+    else parts = line.split(",");
+    return parts.map(s => (s ?? "").trim());
   }
 
   function rankBadgeHtml(rankText) {
@@ -840,25 +934,23 @@
     const file = (location.pathname.split("/").pop() || "").toLowerCase();
     const m = file.match(/(\d{4})-(\d{2})/);
     if (m) return `${m[1]}-${m[2]}`;
-    // fallback se non trova: metti qui quello che vuoi
     return "2026-01";
   }
 
   const MONTH_FOLDER = getMonthFolderFromPage();
 
   async function fetchCsvText(filename) {
-  const url = `data/${MONTH_FOLDER}/${filename}`; // ✅ relativo (GitHub Pages safe)
-  const res = await fetch(url, { cache: "no-store" });
-  if (!res.ok) throw new Error(`CSV non trovato: ${url} (HTTP ${res.status})`);
-  return await res.text();
-}
-
-
+    const url = `data/${MONTH_FOLDER}/${filename}`; // ✅ relativo (GitHub Pages safe)
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error(`CSV non trovato: ${url} (HTTP ${res.status})`);
+    return await res.text();
+  }
 
   // === TOP 10 ===
   async function loadTop10() {
     const body = document.getElementById("top10Body");
     const status = document.getElementById("top10Status");
+    if (!body) return;
 
     try {
       const text = await fetchCsvText("top10.csv");
@@ -879,10 +971,10 @@
         `;
       }).join("");
 
-      status.textContent = "";
+      if (status) status.textContent = "";
     } catch (e) {
       console.error(e);
-      status.textContent = ""; // non mostrare nulla
+      if (status) status.textContent = "";
     }
   }
 
@@ -890,12 +982,10 @@
   async function loadAvg() {
     const body = document.getElementById("avgBody");
     const status = document.getElementById("avgStatus");
+    if (!body) return;
 
     try {
-      // IMPORTANTISSIMO: metti qui il nome esatto del tuo file
-      // (dallo screen mi pare: "classificautentemediapunti.csv")
       const text = await fetchCsvText("classificautentemediapunti.csv");
-
       const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
       const rows = lines.slice(1).map(splitLine);
 
@@ -911,39 +1001,67 @@
         `;
       }).join("");
 
-      status.textContent = "";
+      if (status) status.textContent = "";
     } catch (e) {
       console.error(e);
-      status.textContent = ""; // non mostrare nulla
+      if (status) status.textContent = "";
     }
   }
 
+  // === CLASSIFICA UTENTI ===
+  async function loadUsers() {
+    const body = document.getElementById("usersBody");
+    const status = document.getElementById("usersStatus");
+    if (!body) return;
+
+    try {
+      const text = await fetchCsvText("classificautenti.csv");
+      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+      const rows = lines.slice(1).map(splitLine);
+
+      body.innerHTML = rows.map(cols => {
+        const rank = cols[0];
+        return `
+          <tr>
+            <td>${rankBadgeHtml(rank)}</td>
+            <td>${escapeHtml(cols[1])}</td>
+            <td class="points">${escapeHtml(cols[2])}</td>
+          </tr>
+        `;
+      }).join("");
+
+      if (status) status.textContent = "";
+    } catch (e) {
+      console.error(e);
+      if (status) status.textContent = "";
+    }
+  }
+
+  // Carica tutte
   loadTop10();
   loadAvg();
+  loadUsers();
 
-  // Fullscreen overlay (riutilizzabile per più tabelle)
+  // === Fullscreen overlay (riutilizzabile per più tabelle) ===
   const overlay = document.getElementById("top10Overlay");
   const closeOverlayBtn = document.getElementById("closeOverlayBtn");
   const overlayBody = document.getElementById("overlayBody");
   const overlayTitle = document.querySelector(".overlay-title");
 
   function openOverlayFor(wrapperEl, titleText) {
+    if (!overlay || !overlayBody || !wrapperEl) return;
+
     overlayBody.innerHTML = "";
 
-    // clone del blocco tabella
     const clone = wrapperEl.cloneNode(true);
-
-    // ✅ classe che useremo per “auto-fit” colonne in overlay
     clone.classList.add("fullscreenMode");
 
-    // ripuliamo bordi/overflow del wrapper
     clone.style.overflow = "visible";
     clone.style.border = "0";
     clone.style.borderRadius = "0";
 
     overlayBody.appendChild(clone);
 
-    // titolo overlay dinamico
     if (overlayTitle) overlayTitle.textContent = titleText;
 
     overlay.classList.add("open");
@@ -952,33 +1070,49 @@
   }
 
   function closeOverlay() {
+    if (!overlay) return;
     overlay.classList.remove("open");
     overlay.setAttribute("aria-hidden", "true");
     document.body.style.overflow = "";
   }
 
-  closeOverlayBtn.addEventListener("click", closeOverlay);
-  overlay.addEventListener("click", (e) => {
-    if (e.target === overlay) closeOverlay();
-  });
+  if (closeOverlayBtn) closeOverlayBtn.addEventListener("click", closeOverlay);
+  if (overlay) {
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) closeOverlay();
+    });
+  }
 
   // --- Top10 button ---
   const fullscreenBtn = document.getElementById("fullscreenBtn");
   const top10Wrap = document.getElementById("top10Wrap");
-
-  fullscreenBtn.addEventListener("click", () => {
-    openOverlayFor(top10Wrap, "🏆 Top 10 — Schermo intero");
-  });
+  if (fullscreenBtn && top10Wrap) {
+    fullscreenBtn.addEventListener("click", () => {
+      openOverlayFor(top10Wrap, "🏆 Top 10 — Schermo intero");
+    });
+  }
 
   // --- Avg button ---
   const avgFullscreenBtn = document.getElementById("avgFullscreenBtn");
   const avgWrap = document.getElementById("avgWrap");
+  if (avgFullscreenBtn && avgWrap) {
+    avgFullscreenBtn.addEventListener("click", () => {
+      openOverlayFor(avgWrap, "📊 Classifica Media Voti — Schermo intero");
+    });
+  }
 
-  avgFullscreenBtn.addEventListener("click", () => {
-    openOverlayFor(avgWrap, "📊 Classifica Media Voti — Schermo intero");
-  });
+  // --- Users button ---
+  const usersFullscreenBtn = document.getElementById("fullscreenUsersBtn");
+  const usersWrap = document.getElementById("usersWrap");
+  if (usersFullscreenBtn && usersWrap) {
+    usersFullscreenBtn.addEventListener("click", () => {
+      openOverlayFor(usersWrap, "👤 CLASSIFICA UTENTI — Schermo intero");
+    });
+  }
 </script>
+
 
 
 </body>
 </html>
+
