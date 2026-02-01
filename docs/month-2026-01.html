@@ -850,11 +850,12 @@
   const MONTH_FOLDER = getMonthFolderFromPage();
 
   async function fetchCsvText(filename) {
-  const url = `/data/${MONTH_FOLDER}/${filename}`;  // ✅ root assoluta (Netlify-safe)
+  const url = `data/${MONTH_FOLDER}/${filename}`; // ✅ relativo (GitHub Pages safe)
   const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error(`CSV non trovato: ${url} (HTTP ${res.status})`);
   return await res.text();
 }
+
 
 
   // === TOP 10 ===
