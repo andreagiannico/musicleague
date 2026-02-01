@@ -4,22 +4,532 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Classifica Totale - MusicLeague</title>
-  <style>
-    body{font-family:Arial;background:#0b0b10;color:#fff;margin:0}
-    .wrap{max-width:900px;margin:0 auto;padding:28px}
-    .card{background:#141421;border:1px solid #23233a;border-radius:16px;padding:18px}
-    a{color:#9dd1ff;text-decoration:none}
-    p{color:#cfcfe6}
-  </style>
+
+  <!-- usa il tuo CSS (quello già in repo) -->
+  <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
+  <div class="bg"></div>
+
   <div class="wrap">
+
+    <div class="card headerHero">
+      <div class="navPills">
+        <a class="navPill" href="index.html">🏠 Home</a>
+        <a class="navPill" href="months.html">🗓️ Mesi</a>
+      </div>
+
+      <div class="headerTitleRow" style="justify-content:center;">
+        <div class="headerAppIcon"><span>📊</span></div>
+        <h1 class="headerTitle">Classifica Totale</h1>
+      </div>
+
+      <p class="headerSub" style="text-align:center;">
+        Canzoni: somma dai mesi in <b>data/manifest.json</b> • Giocatori: da <b>data/totali/classifica_utenti.csv</b>
+      </p>
+    </div>
+
+    <!-- CANZONI -->
     <div class="card">
-      <p><a href="index.html">← Torna alla Home</a></p>
-      <h1>📊 Classifica Totale</h1>
-      <p>Qui metteremo le classifiche generali: canzoni, artisti e utenti.</p>
-      <p style="color:#a7a7c7;font-size:14px">Per ora è una pagina segnaposto.</p>
+      <h2 style="margin-top:0">🎵 Canzoni</h2>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 12px 0;">
+        <button class="btn" id="songsFullscreenBtn" type="button">🔍 Schermo intero</button>
+      </div>
+
+      <div id="songsWrap" class="tableWrap">
+        <table id="songsTable">
+          <thead>
+            <tr>
+              <th data-key="rank">Rank</th>
+              <th data-key="title">Titolo</th>
+              <th data-key="artist">Artista/Band</th>
+              <th data-key="avgTotal">Media Totale</th>
+              <th data-key="pointsTotal">Punti Totali</th>
+              <th data-key="proponente">Proponente</th>
+              <th data-key="detail">Dettaglio</th>
+            </tr>
+          </thead>
+          <tbody id="songsBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- GIOCATORI -->
+    <div class="card card-users">
+      <h2 style="margin-top:0">👤 GIOCATORI</h2>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 12px 0;">
+        <button class="btn" id="playersFullscreenBtn" type="button">🔍 Schermo intero</button>
+      </div>
+
+      <div id="playersWrap" class="tableWrap">
+        <table id="playersTable">
+          <thead>
+            <tr>
+              <th data-key="rank">Rank</th>
+              <th data-key="player">Utente</th>
+              <th data-key="avgTotal">Media Totale</th>
+              <th data-key="pointsTotal">Punti Totali</th>
+              <th data-key="detail">Dettaglio</th>
+            </tr>
+          </thead>
+          <tbody id="playersBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Overlay unico (fullscreen + dettaglio) -->
+  <div class="overlay" id="overlay" aria-hidden="true">
+    <div class="overlay-card">
+      <div class="overlay-header">
+        <div class="overlay-title" id="overlayTitle">Dettaglio</div>
+        <button class="btn" id="closeOverlayBtn" type="button">✖ Chiudi</button>
+      </div>
+      <div class="overlay-body" id="overlayBody"></div>
     </div>
   </div>
+
+  <script>
+    // =========================
+    // Helpers
+    // =========================
+    function escapeHtml(s) {
+      return (s ?? "").toString().replace(/[&<>"']/g, m =>
+        ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m])
+      );
+    }
+
+    // parser robusto: ; poi TAB poi ,
+    function splitLine(line) {
+      if (line.includes(";")) return line.split(";");
+      if (line.includes("\t")) return line.split("\t");
+      return line.split(",");
+    }
+
+    function toNumberIT(x) {
+      // "3,88" -> 3.88
+      const s = (x ?? "").toString().trim().replace(",", ".");
+      const n = parseFloat(s);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function rankBadgeHtml(rankNumber) {
+      const n = parseInt(rankNumber, 10);
+      let cls = "rankBadge";
+      if (n === 1) cls += " rankGold";
+      else if (n === 2) cls += " rankSilver";
+      else if (n === 3) cls += " rankBronze";
+      return `<span class="${cls}">${escapeHtml(rankNumber)}</span>`;
+    }
+
+    async function fetchText(url) {
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error(`Impossibile leggere: ${url} (HTTP ${res.status})`);
+      return await res.text();
+    }
+
+    async function fetchFirstAvailable(urls) {
+      let lastErr = null;
+      for (const u of urls) {
+        try {
+          return await fetchText(u);
+        } catch (e) {
+          lastErr = e;
+        }
+      }
+      throw lastErr ?? new Error("Nessun file trovato");
+    }
+
+    async function loadManifest() {
+      const text = await fetchText("data/manifest.json");
+      return JSON.parse(text);
+    }
+
+    // =========================
+    // CANZONI: lettura mesi -> top10.csv
+    // =========================
+    async function loadMonthSongs(monthId) {
+      const text = await fetchText(`data/${monthId}/top10.csv`);
+      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+      const rows = lines.slice(1).map(splitLine);
+
+      // Rank;Titolo;Artista/Band;Media;Punti;Proponente
+      return rows.map(cols => ({
+        month: monthId,
+        rank: (cols[0] ?? "").trim(),
+        title: (cols[1] ?? "").trim(),
+        artist: (cols[2] ?? "").trim(),
+        avg: toNumberIT(cols[3]),
+        points: toNumberIT(cols[4]),
+        proponente: (cols[5] ?? "").trim()
+      }));
+    }
+
+    function aggregateSongs(allRows, monthLabelById) {
+      const map = new Map();
+
+      for (const r of allRows) {
+        const key = `${r.title}||${r.artist}||${r.proponente}`;
+        if (!map.has(key)) {
+          map.set(key, {
+            key,
+            title: r.title,
+            artist: r.artist,
+            proponente: r.proponente,
+            pointsTotal: 0,
+            avgWeightedSum: 0,
+            weight: 0,
+            byMonth: [] // {label, points, avg}
+          });
+        }
+
+        const o = map.get(key);
+        o.pointsTotal += r.points;
+        o.avgWeightedSum += (r.avg * r.points);
+        o.weight += r.points;
+
+        o.byMonth.push({
+          monthId: r.month,
+          label: monthLabelById[r.month] ?? r.month,
+          points: r.points,
+          avg: r.avg
+        });
+      }
+
+      const list = Array.from(map.values()).map(o => ({
+        ...o,
+        avgTotal: o.weight > 0 ? (o.avgWeightedSum / o.weight) : 0
+      }));
+
+      list.sort((a,b) => b.pointsTotal - a.pointsTotal);
+      return list;
+    }
+
+    // =========================
+    // GIOCATORI: lettura da CSV "totali"
+    // =========================
+    const PLAYERS_CSV_URLS = [
+      "data/totali/classifica_utenti.csv",
+      "data/totali/classifica utenti.csv"
+    ];
+
+    function normalizeHeader(h) {
+      return (h ?? "")
+        .toString()
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "_");
+    }
+
+    function isMonthPointsCol(h) {
+      const n = normalizeHeader(h);
+      return n.endsWith("_punti") && !n.startsWith("totale_");
+    }
+
+    function isMonthAvgCol(h) {
+      const n = normalizeHeader(h);
+      return n.endsWith("_media") && !n.startsWith("totale_");
+    }
+
+    function monthNameFromCol(h) {
+      // "gennaio_punti" -> "Gennaio"
+      const n = normalizeHeader(h);
+      const base = n.replace(/_(punti|media)$/i, "");
+      return base.length ? (base.charAt(0).toUpperCase() + base.slice(1)) : base;
+    }
+
+    async function loadPlayersFromTotalsCsv() {
+      const text = await fetchFirstAvailable(PLAYERS_CSV_URLS);
+      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+      if (lines.length < 2) return [];
+
+      const headerRaw = splitLine(lines[0]);
+      const headerNorm = headerRaw.map(normalizeHeader);
+
+      const idxUtente = headerNorm.indexOf("utente");
+      const idxTotPunti = headerNorm.indexOf("totale_punti");
+      const idxTotMedia = headerNorm.indexOf("totale_media");
+
+      if (idxUtente === -1 || idxTotPunti === -1 || idxTotMedia === -1) {
+        throw new Error("CSV utenti: mancano colonne richieste (Utente, Totale_punti, Totale_media).");
+      }
+
+      // Costruiamo la lista mesi (in ordine come nel file)
+      const months = [];
+      for (let i = 0; i < headerRaw.length; i++) {
+        if (isMonthPointsCol(headerRaw[i])) {
+          const month = monthNameFromCol(headerRaw[i]); // es. "Gennaio"
+          const normBase = normalizeHeader(month);      // "gennaio"
+          const idxP = i;
+
+          // cerchiamo la colonna "gennaio_media"
+          const mediaKey = `${normBase}_media`;
+          const idxM = headerNorm.indexOf(mediaKey);
+
+          months.push({
+            label: month,
+            idxPoints: idxP,
+            idxAvg: idxM
+          });
+        }
+      }
+
+      const rows = lines.slice(1).map(splitLine);
+
+      const players = rows
+        .map(cols => {
+          const player = (cols[idxUtente] ?? "").toString().trim();
+          if (!player) return null;
+
+          const pointsTotal = toNumberIT(cols[idxTotPunti]);
+          const avgTotal = toNumberIT(cols[idxTotMedia]);
+
+          const byMonth = months.map(m => ({
+            label: m.label,
+            points: toNumberIT(cols[m.idxPoints]),
+            avg: m.idxAvg >= 0 ? toNumberIT(cols[m.idxAvg]) : 0
+          }))
+          // se vuoi non mostrare mesi completamente vuoti nel dettaglio:
+          .filter(x => (x.points !== 0) || (x.avg !== 0));
+
+          return {
+            player,
+            pointsTotal,
+            avgTotal,
+            byMonth
+          };
+        })
+        .filter(Boolean);
+
+      // ordinamento iniziale: punti desc
+      players.sort((a,b) => b.pointsTotal - a.pointsTotal);
+
+      return players;
+    }
+
+    // =========================
+    // Render
+    // =========================
+    function renderSongsTable(items) {
+      const body = document.getElementById("songsBody");
+      body.innerHTML = items.map((it, i) => `
+        <tr>
+          <td>${rankBadgeHtml(i+1)}</td>
+          <td>${escapeHtml(it.title)}</td>
+          <td style="color:var(--muted);">${escapeHtml(it.artist)}</td>
+          <td>${it.avgTotal.toFixed(2).replace(".", ",")}</td>
+          <td class="points">${escapeHtml(it.pointsTotal)}</td>
+          <td style="color:var(--muted);">${escapeHtml(it.proponente)}</td>
+          <td><button class="btn" data-songkey="${escapeHtml(it.key)}" data-action="songDetail">Dettaglio</button></td>
+        </tr>
+      `).join("");
+    }
+
+    function renderPlayersTable(items) {
+      const body = document.getElementById("playersBody");
+      body.innerHTML = items.map((it, i) => `
+        <tr>
+          <td>${rankBadgeHtml(i+1)}</td>
+          <td>${escapeHtml(it.player)}</td>
+          <td>${it.avgTotal.toFixed(2).replace(".", ",")}</td>
+          <td class="points">${escapeHtml(it.pointsTotal)}</td>
+          <td><button class="btn" data-player="${escapeHtml(it.player)}" data-action="playerDetail">Dettaglio</button></td>
+        </tr>
+      `).join("");
+    }
+
+    // =========================
+    // Ordinamento (click su intestazioni)
+    // =========================
+    function makeSortable(tableEl, getDataFn, renderFn) {
+      const state = { key: null, dir: "desc" };
+
+      tableEl.querySelectorAll("th[data-key]").forEach(th => {
+        const key = th.getAttribute("data-key");
+        if (key === "detail" || key === "rank") return;
+
+        th.style.cursor = "pointer";
+        th.addEventListener("click", () => {
+          const data = getDataFn();
+
+          if (state.key === key) state.dir = (state.dir === "desc" ? "asc" : "desc");
+          else { state.key = key; state.dir = "desc"; }
+
+          const dirMul = state.dir === "desc" ? -1 : 1;
+
+          data.sort((a,b) => {
+            const va = (a[key] ?? "");
+            const vb = (b[key] ?? "");
+
+            if (typeof va === "number" && typeof vb === "number") return (va - vb) * dirMul;
+            return va.toString().localeCompare(vb.toString(), "it", { sensitivity:"base" }) * dirMul;
+          });
+
+          renderFn(data);
+        });
+      });
+    }
+
+    // =========================
+    // Overlay
+    // =========================
+    const overlay = document.getElementById("overlay");
+    const overlayTitle = document.getElementById("overlayTitle");
+    const overlayBody = document.getElementById("overlayBody");
+    document.getElementById("closeOverlayBtn").addEventListener("click", closeOverlay);
+    overlay.addEventListener("click", (e)=>{ if(e.target === overlay) closeOverlay(); });
+
+    function openOverlay(title, html, fullscreen = false) {
+      overlayTitle.textContent = title;
+      overlayBody.innerHTML = html;
+      overlay.classList.add("open");
+      overlay.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+
+      if (fullscreen) {
+        const wrap = overlayBody.querySelector(".tableWrap");
+        if (wrap) wrap.classList.add("fullscreenMode");
+      }
+    }
+
+    function closeOverlay() {
+      overlay.classList.remove("open");
+      overlay.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      overlayBody.innerHTML = "";
+    }
+
+    // =========================
+    // Boot
+    // =========================
+    let SONGS = [];
+    let PLAYERS = [];
+    let SONGS_MAP = new Map();
+    let PLAYERS_MAP = new Map();
+
+    (async function main(){
+      // ---- CANZONI (come prima) ----
+      const manifest = await loadManifest();
+      const monthLabelById = {};
+      for (const m of manifest.months) monthLabelById[m.id] = m.label;
+
+      let allRows = [];
+      for (const m of manifest.months) {
+        const rows = await loadMonthSongs(m.id);
+        allRows = allRows.concat(rows);
+      }
+
+      SONGS = aggregateSongs(allRows, monthLabelById);
+      SONGS_MAP = new Map(SONGS.map(x => [x.key, x]));
+      renderSongsTable([...SONGS]);
+      makeSortable(document.getElementById("songsTable"), () => [...SONS], renderSongsTable);
+
+      // ---- GIOCATORI (da totali CSV) ----
+      PLAYERS = await loadPlayersFromTotalsCsv();
+      PLAYERS_MAP = new Map(PLAYERS.map(x => [x.player, x]));
+      renderPlayersTable([...PLAYERS]);
+      makeSortable(document.getElementById("playersTable"), () => [...PLAYERS], renderPlayersTable);
+
+      // fullscreen bottoni
+      document.getElementById("songsFullscreenBtn").addEventListener("click", () => {
+        openOverlay("🎵 Canzoni — Schermo intero",
+          `<div class="tableWrap fullscreenMode">${document.getElementById("songsWrap").innerHTML}</div>`,
+          true
+        );
+      });
+
+      document.getElementById("playersFullscreenBtn").addEventListener("click", () => {
+        openOverlay("👤 Giocatori — Schermo intero",
+          `<div class="tableWrap fullscreenMode">${document.getElementById("playersWrap").innerHTML}</div>`,
+          true
+        );
+      });
+
+      // click su “Dettaglio”
+      document.body.addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-action]");
+        if (!btn) return;
+
+        const action = btn.getAttribute("data-action");
+
+        if (action === "songDetail") {
+          const key = btn.getAttribute("data-songkey");
+          const it = SONGS_MAP.get(key);
+          if (!it) return;
+
+          const rowsHtml = it.byMonth
+            .sort((a,b)=> a.monthId.localeCompare(b.monthId))
+            .map(x => `
+              <tr>
+                <td>${escapeHtml(x.label)}</td>
+                <td>${x.avg.toFixed(2).replace(".", ",")}</td>
+                <td class="points">${escapeHtml(x.points)}</td>
+              </tr>
+            `).join("");
+
+          openOverlay(
+            `🎵 Dettaglio — ${it.title} (${it.artist})`,
+            `
+              <div class="tableWrap fullscreenMode">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Mese</th>
+                      <th>Media</th>
+                      <th>Punti</th>
+                    </tr>
+                  </thead>
+                  <tbody>${rowsHtml}</tbody>
+                </table>
+              </div>
+            `,
+            true
+          );
+        }
+
+        if (action === "playerDetail") {
+          const player = btn.getAttribute("data-player");
+          const it = PLAYERS_MAP.get(player);
+          if (!it) return;
+
+          const rowsHtml = (it.byMonth ?? [])
+            .map(x => `
+              <tr>
+                <td>${escapeHtml(x.label)}</td>
+                <td class="points">${escapeHtml(x.points)}</td>
+                <td>${x.avg.toFixed(2).replace(".", ",")}</td>
+              </tr>
+            `).join("");
+
+          openOverlay(
+            `👤 Dettaglio — ${it.player}`,
+            `
+              <div class="tableWrap fullscreenMode">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Mese</th>
+                      <th>Punti</th>
+                      <th>Media</th>
+                    </tr>
+                  </thead>
+                  <tbody>${rowsHtml || `<tr><td colspan="3" style="padding:10px;color:var(--muted)">Nessun dato mese-per-mese.</td></tr>`}</tbody>
+                </table>
+              </div>
+            `,
+            true
+          );
+        }
+      });
+
+    })().catch(err => {
+      console.error(err);
+      openOverlay("Errore", `<div style="padding:14px">⚠️ ${escapeHtml(err.message)}</div>`, false);
+    });
+  </script>
 </body>
 </html>
