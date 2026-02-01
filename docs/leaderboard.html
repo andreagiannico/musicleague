@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Classifica Totale - MusicLeague</title>
 
-  <!-- IMPORTANTE: questo file deve ESISTERE nella root del sito (docs/styles.css) -->
-  <link rel="stylesheet" href="styles.css?v=1" />
+  <!-- Deve esistere nella root docs/ -->
+  <link rel="stylesheet" href="styles.css?v=2" />
 </head>
 
 <body>
@@ -26,39 +26,11 @@
       </div>
 
       <p class="headerSub" style="text-align:center;">
-        Canzoni: somma dai mesi in <b>data/manifest.json</b> • Giocatori: da <b>data/totali/classifica_utenti.csv</b>
+        Giocatori: da <b>data/totali/classifica_utenti.csv</b> • Canzoni: da <b>data/totali/classifica_canzoni.csv</b>
       </p>
     </div>
 
-    <!-- CANZONI -->
-    <div class="card">
-      <h2 style="margin-top:0">🎵 Canzoni</h2>
-
-      <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 12px 0;">
-        <button class="btn" id="songsFullscreenBtn" type="button">🔍 Schermo intero</button>
-        <button class="btn" id="songsDetailBtn" type="button">🧾 Dettaglio mesi</button>
-      </div>
-
-      <div id="songsWrap" class="tableWrap">
-        <table id="songsTable">
-          <thead>
-            <tr>
-              <th data-key="rank">Rank</th>
-              <th data-key="title">Titolo</th>
-              <th data-key="artist">Artista/Band</th>
-              <th data-key="avgTotal">Media Totale</th>
-              <th data-key="pointsTotal">Punti Totali</th>
-              <th data-key="proponente">Proponente</th>
-            </tr>
-          </thead>
-          <tbody id="songsBody"></tbody>
-        </table>
-      </div>
-
-      <p id="songsStatus" class="hint" style="margin-top:10px;"></p>
-    </div>
-
-    <!-- GIOCATORI -->
+    <!-- ✅ GIOCATORI (in cima) -->
     <div class="card card-users">
       <h2 style="margin-top:0">👤 GIOCATORI</h2>
 
@@ -84,6 +56,33 @@
       <p id="playersStatus" class="hint" style="margin-top:10px;"></p>
     </div>
 
+    <!-- ✅ CANZONI (da file tuo, senza dettaglio mesi) -->
+    <div class="card">
+      <h2 style="margin-top:0">🎵 CANZONI</h2>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 12px 0;">
+        <button class="btn" id="songsFullscreenBtn" type="button">🔍 Schermo intero</button>
+      </div>
+
+      <div id="songsWrap" class="tableWrap">
+        <table id="songsTable">
+          <thead>
+            <tr>
+              <th data-key="rank">Rank</th>
+              <th data-key="title">Titolo</th>
+              <th data-key="artist">Artista/Band</th>
+              <th data-key="avgTotal">Media Totale</th>
+              <th data-key="pointsTotal">Punti Totali</th>
+              <th data-key="user">Utente</th>
+            </tr>
+          </thead>
+          <tbody id="songsBody"></tbody>
+        </table>
+      </div>
+
+      <p id="songsStatus" class="hint" style="margin-top:10px;"></p>
+    </div>
+
   </div>
 
   <!-- Overlay unico -->
@@ -99,6 +98,12 @@
 
   <script>
     // =========================
+    // CONFIG (file totali)
+    // =========================
+    const PLAYERS_TOTALS_CSV = "data/totali/classifica_utenti.csv";
+    const SONGS_TOTALS_CSV   = "data/totali/classifica_canzoni.csv";
+
+    // =========================
     // Helpers
     // =========================
     function escapeHtml(s) {
@@ -107,32 +112,30 @@
       );
     }
 
+    function cleanCell(x) {
+      return (x ?? "").toString().trim();
+    }
+
     function toNumberIT(x) {
-      const s = (x ?? "").toString().trim().replace(",", ".");
+      const s = cleanCell(x).replace(",", ".");
       const n = parseFloat(s);
       return Number.isFinite(n) ? n : 0;
     }
 
     function toIntIT(x) {
-      const s = (x ?? "").toString().trim().replace(",", ".");
+      const s = cleanCell(x).replace(",", ".");
       const n = parseFloat(s);
       return Number.isFinite(n) ? n : 0;
     }
 
-    function splitLine(line) {
-      // robusto (usa per top10)
-      if (line.includes(";")) return line.split(";");
-      if (line.includes("\t")) return line.split("\t");
-      return line.split(",");
-    }
-
     function splitLineSemi(line) {
-      // FORZATO per classifica_utenti.csv
       return line.split(";");
     }
 
-    function cleanCell(x) {
-      return (x ?? "").toString().trim();
+    function normalizeHeader(h) {
+      return cleanCell(h).toLowerCase()
+        .replace(/\s+/g, "_")
+        .replace(/[^\wàèéìòù_-]/g, "");
     }
 
     function rankBadgeHtml(rankNumber) {
@@ -180,93 +183,27 @@
     }
 
     // =========================
-    // Manifest + Songs dai mesi
+    // Load PLAYERS (totali + mesi per dettaglio)
     // =========================
-    async function loadManifest() {
-      const text = await fetchText("data/manifest.json");
-      return JSON.parse(text);
-    }
-
-    async function loadMonthSongs(monthId) {
-      const text = await fetchText(`data/${monthId}/top10.csv`);
-      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
-      const rows = lines.slice(1).map(splitLine);
-
-      return rows.map(cols => ({
-        monthId,
-        title: cleanCell(cols[1]),
-        artist: cleanCell(cols[2]),
-        avg: toNumberIT(cols[3]),
-        points: toIntIT(cols[4]),
-        proponente: cleanCell(cols[5])
-      }));
-    }
-
-    function aggregateSongs(allRows) {
-      const map = new Map();
-      for (const r of allRows) {
-        const key = `${r.title}||${r.artist}||${r.proponente}`;
-        if (!map.has(key)) {
-          map.set(key, {
-            key,
-            title: r.title,
-            artist: r.artist,
-            proponente: r.proponente,
-            pointsTotal: 0,
-            avgWeightedSum: 0,
-            weight: 0,
-            byMonth: new Map() // monthId -> {points, avg}
-          });
-        }
-        const o = map.get(key);
-        o.pointsTotal += r.points;
-        o.avgWeightedSum += (r.avg * r.points);
-        o.weight += r.points;
-        o.byMonth.set(r.monthId, { points: r.points, avg: r.avg });
-      }
-
-      const list = Array.from(map.values()).map(o => ({
-        ...o,
-        avgTotal: o.weight > 0 ? (o.avgWeightedSum / o.weight) : 0
-      }));
-
-      list.sort((a,b) => b.pointsTotal - a.pointsTotal);
-      return list;
-    }
-
-    // =========================
-    // Players da CSV totali
-    // =========================
-    function normalizeHeader(h) {
-      return cleanCell(h).toLowerCase()
-        .replace(/\s+/g, "_")
-        .replace(/[^\wàèéìòù_-]/g, "");
-    }
-
     async function loadPlayersFromTotalsCsv() {
-      const text = await fetchText("data/totali/classifica_utenti.csv");
+      const text = await fetchText(PLAYERS_TOTALS_CSV);
       const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
-
       if (lines.length < 2) return { players: [], monthNames: [] };
 
-      // header FORZATO su ;
-      const headerRaw = splitLineSemi(lines[0]).map(cleanCell);
+      const headerRaw  = splitLineSemi(lines[0]).map(cleanCell);
       const headerNorm = headerRaw.map(normalizeHeader);
 
-      // trova colonne totali
-      const idxUtente = headerNorm.indexOf("utente");
+      const idxUtente   = headerNorm.indexOf("utente");
       const idxTotPunti = headerNorm.indexOf("totale_punti");
       const idxTotMedia = headerNorm.indexOf("totale_media");
 
       if (idxUtente === -1 || idxTotPunti === -1 || idxTotMedia === -1) {
-        throw new Error("Header CSV utenti non valido: servono Utente, Totale_punti, Totale_media");
+        throw new Error("Header utenti non valido: servono Utente, Totale_punti, Totale_media");
       }
 
-      // individua mesi dall’header nell’ordine del file
-      // es: Gennaio_punti, Gennaio_media...
+      // mesi dal header: Gennaio_punti / Gennaio_media ...
       const monthNames = [];
-      const monthCols = []; // {name, puntiIdx, mediaIdx}
-
+      const monthCols = [];
       for (let i=0; i<headerNorm.length; i++) {
         const h = headerNorm[i];
         if (h.endsWith("_punti") && !h.startsWith("totale_")) {
@@ -292,6 +229,7 @@
           }));
 
           return {
+            // Rank lo ricalcoliamo sempre in UI (ordinamento dinamico)
             player: cols[idxUtente],
             totale_punti: toIntIT(cols[idxTotPunti]),
             totale_media: toNumberIT(cols[idxTotMedia]),
@@ -299,28 +237,63 @@
           };
         });
 
-      // default sort: totale_punti desc
+      // default sort: punti desc
       players.sort((a,b) => b.totale_punti - a.totale_punti);
       return { players, monthNames };
     }
 
     // =========================
-    // Render (SUMMARY)
+    // Load SONGS (solo totali, niente mesi)
     // =========================
-    function renderSongsTable(items) {
-      const body = document.getElementById("songsBody");
-      body.innerHTML = items.map((it, i) => `
-        <tr>
-          <td>${rankBadgeHtml(i+1)}</td>
-          <td>${escapeHtml(it.title)}</td>
-          <td style="color:var(--muted);">${escapeHtml(it.artist)}</td>
-          <td>${it.avgTotal.toFixed(2).replace(".", ",")}</td>
-          <td class="points">${escapeHtml(it.pointsTotal)}</td>
-          <td style="color:var(--muted);">${escapeHtml(it.proponente)}</td>
-        </tr>
-      `).join("");
+    function findFirstIndex(headerNorm, candidates) {
+      for (const c of candidates) {
+        const idx = headerNorm.indexOf(c);
+        if (idx !== -1) return idx;
+      }
+      return -1;
     }
 
+    async function loadSongsFromTotalsCsv() {
+      const text = await fetchText(SONGS_TOTALS_CSV);
+      const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+      if (lines.length < 2) return [];
+
+      const headerRaw  = splitLineSemi(lines[0]).map(cleanCell);
+      const headerNorm = headerRaw.map(normalizeHeader);
+
+      // accettiamo varianti di header
+      const idxRank  = findFirstIndex(headerNorm, ["rank", "pos", "posizione"]);
+      const idxTitle = findFirstIndex(headerNorm, ["titolo", "title"]);
+      const idxArt   = findFirstIndex(headerNorm, ["artista", "artist", "artista_band", "artistaband"]);
+      const idxAvg   = findFirstIndex(headerNorm, ["media", "media_totale", "avg", "average"]);
+      const idxPts   = findFirstIndex(headerNorm, ["punti", "punti_totali", "points", "points_total"]);
+      const idxUser  = findFirstIndex(headerNorm, ["utente", "proponente", "user"]);
+
+      if (idxTitle === -1 || idxArt === -1 || idxAvg === -1 || idxPts === -1 || idxUser === -1) {
+        throw new Error("Header canzoni non valido: servono Titolo, Artista, Media, Punti, Utente (Rank opzionale)");
+      }
+
+      const rows = lines.slice(1).map(l => splitLineSemi(l).map(cleanCell));
+
+      const songs = rows
+        .filter(cols => cols[idxTitle] && cols[idxTitle].trim() !== "")
+        .map(cols => ({
+          rank: idxRank !== -1 ? cleanCell(cols[idxRank]) : "",
+          title: cleanCell(cols[idxTitle]),
+          artist: cleanCell(cols[idxArt]),
+          avgTotal: toNumberIT(cols[idxAvg]),
+          pointsTotal: toIntIT(cols[idxPts]),
+          user: cleanCell(cols[idxUser])
+        }));
+
+      // default sort: punti desc (se vuoi rank fisso da file, dimmelo e lo rispettiamo)
+      songs.sort((a,b) => b.pointsTotal - a.pointsTotal);
+      return songs;
+    }
+
+    // =========================
+    // Render
+    // =========================
     function renderPlayersTable(items) {
       const body = document.getElementById("playersBody");
       body.innerHTML = items.map((it, i) => `
@@ -333,18 +306,33 @@
       `).join("");
     }
 
+    function renderSongsTable(items) {
+      const body = document.getElementById("songsBody");
+      body.innerHTML = items.map((it, i) => `
+        <tr>
+          <td>${rankBadgeHtml(i+1)}</td>
+          <td>${escapeHtml(it.title)}</td>
+          <td style="color:var(--muted);">${escapeHtml(it.artist)}</td>
+          <td>${it.avgTotal.toFixed(2).replace(".", ",")}</td>
+          <td class="points">${escapeHtml(it.pointsTotal)}</td>
+          <td style="color:var(--muted);">${escapeHtml(it.user)}</td>
+        </tr>
+      `).join("");
+    }
+
     // =========================
-    // Render (DETTAGLIO MESI)
+    // Dettaglio mesi (solo giocatori)
     // =========================
     function renderPlayersDetailTable(items, monthNames) {
       const cols = monthNames.flatMap(m => [`${m} Punti`, `${m} Media`]);
+
       const head = `
         <tr>
-          <th data-key="rank">Rank</th>
-          <th data-key="player">Utente</th>
+          <th>Rank</th>
+          <th>Utente</th>
           ${cols.map(c => `<th>${escapeHtml(c)}</th>`).join("")}
-          <th data-key="totale_punti">Totale Punti</th>
-          <th data-key="totale_media">Totale Media</th>
+          <th>Totale Punti</th>
+          <th>Totale Media</th>
         </tr>
       `;
 
@@ -375,58 +363,8 @@
       `;
     }
 
-    function renderSongsDetailTable(items, manifestMonths) {
-      // colonne mesi = (label Punti, label Media) per ogni mese
-      const cols = manifestMonths.flatMap(m => [`${m.label} Punti`, `${m.label} Media`]);
-
-      const head = `
-        <tr>
-          <th data-key="rank">Rank</th>
-          <th data-key="title">Titolo</th>
-          <th data-key="artist">Artista/Band</th>
-          <th data-key="proponente">Proponente</th>
-          ${cols.map(c => `<th>${escapeHtml(c)}</th>`).join("")}
-          <th data-key="pointsTotal">Totale Punti</th>
-          <th data-key="avgTotal">Media Totale</th>
-        </tr>
-      `;
-
-      const rows = items.map((it, i) => {
-        const monthCells = manifestMonths.flatMap(m => {
-          const bm = it.byMonth.get(m.id);
-          const punti = bm ? bm.points : "";
-          const media = bm ? bm.avg : "";
-          return [
-            `<td class="points">${escapeHtml(punti)}</td>`,
-            `<td>${escapeHtml(media !== "" ? Number(media).toFixed(2).replace(".", ",") : "")}</td>`
-          ];
-        }).join("");
-
-        return `
-          <tr>
-            <td>${rankBadgeHtml(i+1)}</td>
-            <td>${escapeHtml(it.title)}</td>
-            <td style="color:var(--muted);">${escapeHtml(it.artist)}</td>
-            <td style="color:var(--muted);">${escapeHtml(it.proponente)}</td>
-            ${monthCells}
-            <td class="points">${escapeHtml(it.pointsTotal)}</td>
-            <td>${it.avgTotal.toFixed(2).replace(".", ",")}</td>
-          </tr>
-        `;
-      }).join("");
-
-      return `
-        <div class="tableWrap fullscreenMode">
-          <table>
-            <thead>${head}</thead>
-            <tbody>${rows}</tbody>
-          </table>
-        </div>
-      `;
-    }
-
     // =========================
-    // Ordinamento (summary)
+    // Ordinamento cliccando intestazioni
     // =========================
     function makeSortable(tableEl, getDataFn, renderFn) {
       const state = { key: null, dir: "desc" };
@@ -460,44 +398,28 @@
     // =========================
     // Boot
     // =========================
-    let SONGS = [];
     let PLAYERS = [];
-    let MANIFEST_MONTHS = [];
     let PLAYERS_MONTH_NAMES = [];
+    let SONGS = [];
 
     (async function main(){
-      // manifest
-      const manifest = await loadManifest();
-      MANIFEST_MONTHS = (manifest.months || []);
-
-      // SONGS: somma dai mesi
-      let allSongRows = [];
-      for (const m of MANIFEST_MONTHS) {
-        const rows = await loadMonthSongs(m.id);
-        allSongRows = allSongRows.concat(rows);
-      }
-      SONGS = aggregateSongs(allSongRows);
-
-      // PLAYERS: da file totali
+      // PLAYERS
       const playersRes = await loadPlayersFromTotalsCsv();
       PLAYERS = playersRes.players;
       PLAYERS_MONTH_NAMES = playersRes.monthNames;
 
-      renderSongsTable([...SONGS]);
-      renderPlayersTable([...PLAYERS]);
+      // SONGS
+      SONGS = await loadSongsFromTotalsCsv();
 
-      // sortable summary
-      makeSortable(document.getElementById("songsTable"), () => [...SONGS], renderSongsTable);
+      // render
+      renderPlayersTable([...PLAYERS]);
+      renderSongsTable([...SONGS]);
+
+      // sortable
       makeSortable(document.getElementById("playersTable"), () => [...PLAYERS], renderPlayersTable);
+      makeSortable(document.getElementById("songsTable"), () => [...SONS], renderSongsTable);
 
       // fullscreen summary
-      document.getElementById("songsFullscreenBtn").addEventListener("click", () => {
-        openOverlay("🎵 Canzoni — Schermo intero",
-          `<div class="tableWrap fullscreenMode">${document.getElementById("songsWrap").innerHTML}</div>`,
-          true
-        );
-      });
-
       document.getElementById("playersFullscreenBtn").addEventListener("click", () => {
         openOverlay("👤 Giocatori — Schermo intero",
           `<div class="tableWrap fullscreenMode">${document.getElementById("playersWrap").innerHTML}</div>`,
@@ -505,16 +427,24 @@
         );
       });
 
-      // dettaglio mesi (UNO per tabella)
+      document.getElementById("songsFullscreenBtn").addEventListener("click", () => {
+        openOverlay("🎵 Canzoni — Schermo intero",
+          `<div class="tableWrap fullscreenMode">${document.getElementById("songsWrap").innerHTML}</div>`,
+          true
+        );
+      });
+
+      // dettaglio mesi (UNO per tabella) — solo giocatori
       document.getElementById("playersDetailBtn").addEventListener("click", () => {
         const html = renderPlayersDetailTable([...PLAYERS], PLAYERS_MONTH_NAMES);
         openOverlay("👤 Giocatori — Dettaglio mesi", html, true);
       });
 
-      document.getElementById("songsDetailBtn").addEventListener("click", () => {
-        const html = renderSongsDetailTable([...SONGS], MANIFEST_MONTHS);
-        openOverlay("🎵 Canzoni — Dettaglio mesi", html, true);
-      });
+      // status (se vuote)
+      if (!SONGS.length) document.getElementById("songsStatus").textContent =
+        `Nessun dato trovato. Carica ${SONGS_TOTALS_CSV} (separato da ;)`;
+      if (!PLAYERS.length) document.getElementById("playersStatus").textContent =
+        `Nessun dato trovato. Carica ${PLAYERS_TOTALS_CSV} (separato da ;)`;
 
     })().catch(err => {
       console.error(err);
