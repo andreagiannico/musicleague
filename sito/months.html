@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mesi - MusicLeague</title>
+
+  <style>
+    :root{
+      --bg:#0b0b10;
+      --card:#141421cc;
+      --text:#ffffff;
+      --muted:#cfcfe6;
+      --muted2:#a7a7c7;
+      --radius:22px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+                   "Segoe UI", Roboto, Arial, sans-serif;
+      color:var(--text);
+      background: var(--bg);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    /* sfondo “Apple-like” */
+    .bg{
+      position:fixed;
+      inset:-40px;
+      background:
+        radial-gradient(900px 500px at 20% 15%, rgba(90,167,255,.22), transparent 60%),
+        radial-gradient(900px 500px at 85% 10%, rgba(123,123,255,.22), transparent 55%),
+        radial-gradient(900px 650px at 70% 75%, rgba(90,255,211,.10), transparent 60%),
+        radial-gradient(900px 650px at 10% 80%, rgba(255,90,199,.08), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.04), transparent 35%);
+      filter: blur(18px);
+      z-index:-1;
+    }
+
+    .wrap{
+      max-width:980px;
+      margin:0 auto;
+      padding:40px 20px;
+      min-height:100vh;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+    }
+
+    .card{
+      width: min(920px, 100%);
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow:
+        0 20px 60px rgba(0,0,0,.45),
+        inset 0 1px 0 rgba(255,255,255,.08);
+      backdrop-filter: blur(18px);
+    }
+
+    a{ color:#9dd1ff; text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+      gap:10px;
+      margin-bottom:14px;
+      color:var(--muted2);
+      font-size:14px;
+    }
+
+    .titleRow{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:12px;
+      margin-top:8px;
+    }
+
+    .appIcon{
+      width:42px;height:42px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      background: linear-gradient(135deg, rgba(90,167,255,.9), rgba(123,123,255,.9));
+      box-shadow: 0 12px 24px rgba(0,0,0,.35);
+      font-size:20px;
+    }
+
+    h1{
+      margin:0;
+      font-size:34px;
+      letter-spacing:.2px;
+    }
+
+    .subtitle{
+      margin:10px 0 0 0;
+      color:var(--muted);
+      text-align:center;
+      font-size:14px;
+    }
+
+    .monthsGrid{
+      margin-top:22px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+      justify-items:center;
+    }
+
+    .monthBtn{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      width: 100%;
+      max-width: 520px;
+
+      padding:14px 16px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(16,16,26,.55);
+      color:var(--text);
+      text-decoration:none;
+
+      transition: transform .08s ease, background .15s ease, border-color .15s ease, opacity .15s ease;
+    }
+
+    .monthBtn:hover{
+      transform: translateY(-1px);
+      background: rgba(32,32,56,.55);
+      border-color: rgba(255,255,255,.16);
+      text-decoration:none;
+    }
+
+    .monthLeft{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+
+    .monthBadge{
+      width:38px;height:38px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      background: linear-gradient(135deg, rgba(90,167,255,.35), rgba(123,123,255,.35));
+      border:1px solid rgba(255,255,255,.10);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+      flex:0 0 auto;
+      overflow:hidden;
+    }
+
+    .monthImg{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      border-radius:12px;
+      display:block;
+    }
+
+    .monthText{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      min-width:0;
+    }
+
+    .monthName{
+      font-weight:700;
+      font-size:15px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .monthMeta{
+      color:var(--muted2);
+      font-size:12px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .chev{
+      opacity:.75;
+      flex:0 0 auto;
+      font-size:18px;
+    }
+
+    /* ✅ STILE "BLOCCATO" */
+    .monthBtn.locked{
+      opacity:.45;
+      filter:saturate(.6);
+      cursor:not-allowed;
+      pointer-events:none; /* non cliccabile */
+      background: rgba(16,16,26,.35);
+    }
+    .monthBtn.locked:hover{
+      transform:none;      /* niente “lift” */
+      background: rgba(16,16,26,.35);
+      border-color: rgba(255,255,255,.10);
+    }
+    .monthBtn.locked .chev{
+      opacity:.35;
+    }
+
+    /* Badge testo “Disponibile dal…” */
+    .availTag{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-top:6px;
+
+  font-size:11px;
+  letter-spacing:.2px;
+  color: rgba(255,255,255,.82);
+
+  padding:6px 10px;
+  border-radius:999px;
+
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.10);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  width: fit-content;
+}
+.availTag::before{
+  content:"⏳";
+  opacity:.9;
+}
+
+
+    .divider{
+      margin:18px 0 0 0;
+      border-top:1px solid rgba(255,255,255,.08);
+      padding-top:14px;
+      color:var(--muted2);
+      font-size:13px;
+      text-align:center;
+    }
+
+    @media (min-width: 700px){
+      .monthsGrid{
+        grid-template-columns: repeat(auto-fit, minmax(320px, 520px));
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg"></div>
+
+  <div class="wrap">
+    <div class="card">
+
+      <div class="topbar">
+        <a href="index.html">← Torna alla Home</a>
+      </div>
+
+      <div class="titleRow">
+        <div class="appIcon">🗓️</div>
+        <h1>Mesi</h1>
+      </div>
+
+      <p class="subtitle">Apri le pagine mese per mese.</p>
+
+      <div class="monthsGrid" id="monthsGrid">
+
+        <!-- Gennaio -->
+        <a class="monthBtn" href="month-2026-01.html" data-month="2026-01">
+          <div class="monthLeft">
+            <div class="monthBadge">
+              <img src="assets/gennaio26.png" alt="Gennaio 2026" class="monthImg">
+            </div>
+            <div class="monthText">
+              <div class="monthName">Gennaio 2026</div>
+              <div class="monthMeta">Playlist • form • classifiche</div>
+            </div>
+          </div>
+          <div class="chev">›</div>
+        </a>
+
+        <!-- Febbraio -->
+        <a class="monthBtn" href="month-2026-02.html" data-month="2026-02">
+          <div class="monthLeft">
+            <div class="monthBadge">
+              <img src="assets/febbraio26.png" alt="Febbraio 2026" class="monthImg">
+            </div>
+            <div class="monthText">
+              <div class="monthName">Febbraio 2026</div>
+              <div class="monthMeta">Playlist • form • classifiche</div>
+            </div>
+          </div>
+          <div class="chev">›</div>
+        </a>
+
+        <!-- Marzo -->
+        <a class="monthBtn" href="month-2026-03.html" data-month="2026-03">
+          <div class="monthLeft">
+            <div class="monthBadge">
+              <img src="assets/marzo26.png" alt="Marzo 2026" class="monthImg">
+            </div>
+            <div class="monthText">
+              <div class="monthName">Marzo 2026</div>
+              <div class="monthMeta">Playlist • form • classifiche</div>
+            </div>
+          </div>
+          <div class="chev">›</div>
+        </a>
+
+        <!-- Aprile -->
+        <a class="monthBtn" href="month-2026-04.html" data-month="2026-04">
+          <div class="monthLeft">
+            <div class="monthBadge">
+              <img src="assets/aprile26.png" alt="Aprile 2026" class="monthImg">
+            </div>
+            <div class="monthText">
+              <div class="monthName">Aprile 2026</div>
+              <div class="monthMeta">Playlist • form • classifiche</div>
+            </div>
+          </div>
+          <div class="chev">›</div>
+        </a>
+
+        <!-- Maggio -->
+        <a class="monthBtn" href="month-2026-05.html" data-month="2026-05">
+          <div class="monthLeft">
+            <div class="monthBadge">
+              <img src="assets/maggio26.png" alt="Maggio 2026" class="monthImg">
+            </div>
+            <div class="monthText">
+              <div class="monthName">Maggio 2026</div>
+              <div class="monthMeta">Playlist • form • classifiche</div>
+            </div>
+          </div>
+          <div class="chev">›</div>
+        </a>
+
+        <!-- Giugno -->
+        <a class="monthBtn" href="month-2026-06.html" data-month="2026-06">
+          <div class="monthLeft">
+            <div class="monthBadge">
+              <img src="assets/giugno26.png" alt="Giugno 2026" class="monthImg">
+            </div>
+            <div class="monthText">
+              <div class="monthName">Giugno 2026</div>
+              <div class="monthMeta">Playlist • form • classifiche</div>
+            </div>
+          </div>
+          <div class="chev">›</div>
+        </a>
+
+        <!-- Luglio -->
+        <a class="monthBtn" href="month-2026-07.html" data-month="2026-07">
+          <div class="monthLeft">
+            <div class="monthBadge">
+              <img src="assets/luglio26.png" alt="Luglio 2026" class="monthImg">
+            </div>
+            <div class="monthText">
+              <div class="monthName">Luglio 2026</div>
+              <div class="monthMeta">Playlist • form • classifiche</div>
+            </div>
+          </div>
+          <div class="chev">›</div>
+        </a>
+
+        <!-- Agosto -->
+        <a class="monthBtn" href="month-2026-08.html" data-month="2026-08">
+          <div class="monthLeft">
+            <div class="monthBadge">
+              <img src="assets/agosto26.png" alt="Agosto 2026" class="monthImg">
+            </div>
+            <div class="monthText">
+              <div class="monthName">Agosto 2026</div>
+              <div class="monthMeta">Playlist • form • classifiche</div>
+            </div>
+          </div>
+          <div class="chev">›</div>
+        </a>
+
+        <!-- Settembre -->
+        <a class="monthBtn" href="month-2026-09.html" data-month="2026-09">
+          <div class="monthLeft">
+            <div class="monthBadge">
+              <img src="assets/settembre26.png" alt="Settembre 2026" class="monthImg">
+            </div>
+            <div class="monthText">
+              <div class="monthName">Settembre 2026</div>
+              <div class="monthMeta">Playlist • form • classifiche</div>
+            </div>
+          </div>
+          <div class="chev">›</div>
+        </a>
+
+        <!-- Ottobre -->
+        <a class="monthBtn" href="month-2026-10.html" data-month="2026-10">
+          <div class="monthLeft">
+            <div class="monthBadge">
+              <img src="assets/ottobre26.png" alt="Ottobre 2026" class="monthImg">
+            </div>
+            <div class="monthText">
+              <div class="monthName">Ottobre 2026</div>
+              <div class="monthMeta">Playlist • form • classifiche</div>
+            </div>
+          </div>
+          <div class="chev">›</div>
+        </a>
+
+        <!-- Novembre -->
+        <a class="monthBtn" href="month-2026-11.html" data-month="2026-11">
+          <div class="monthLeft">
+            <div class="monthBadge">
+              <img src="assets/novembre26.png" alt="Novembre 2026" class="monthImg">
+            </div>
+            <div class="monthText">
+              <div class="monthName">Novembre 2026</div>
+              <div class="monthMeta">Playlist • form • classifiche</div>
+            </div>
+          </div>
+          <div class="chev">›</div>
+        </a>
+
+        <!-- Dicembre -->
+        <a class="monthBtn" href="month-2026-12.html" data-month="2026-12">
+          <div class="monthLeft">
+            <div class="monthBadge">
+              <img src="assets/dicembre26.png" alt="Dicembre 2026" class="monthImg">
+            </div>
+            <div class="monthText">
+              <div class="monthName">Dicembre 2026</div>
+              <div class="monthMeta">Playlist • form • classifiche</div>
+            </div>
+          </div>
+          <div class="chev">›</div>
+        </a>
+
+      </div>
+
+      <div class="divider">
+        Tip: quando aggiungi un nuovo mese, duplica un blocco e cambia solo il link + data-month.
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = now.getDate();
+
+    const currentKey = `${year}-${month}`;
+    const isCurrentMonthUnlocked = day >= 6;
+
+    document.querySelectorAll(".monthBtn[data-month]").forEach(btn => {
+      const m = btn.getAttribute("data-month");
+      const isFutureMonth = m > currentKey;
+      const isCurrentMonth = m === currentKey;
+
+      const mustLock = isFutureMonth || (isCurrentMonth && !isCurrentMonthUnlocked);
+
+      if (mustLock) {
+        btn.classList.add("locked");
+        btn.removeAttribute("href");
+
+        const monthText = btn.querySelector(".monthText");
+        if (monthText) {
+          const old = monthText.querySelector(".availTag");
+          if (old) old.remove();
+
+          const monthNum = m.slice(5, 7);
+
+          const tag = document.createElement("div");
+          tag.className = "availTag";
+          tag.textContent = `Sblocco 06/${monthNum}`;
+
+          monthText.appendChild(tag);
+        }
+      }
+    });
+  })();
+</script>
+
+
+
+
+</body>
+</html>
