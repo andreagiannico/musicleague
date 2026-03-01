@@ -1,22 +1,49 @@
-﻿Rank;Titolo;Artista;Media;Punti;Utente;;;;;;;;;;;;;;;;;;;;;
-1;Pier;Claver Gold, Murubutu;3,88;15;Leonardo;;;;;;;;;;;;;;;;;;;;;
-2;Diamante;Zucchero;3,88;15;Leonardo;;;;;;;;;;;;;;;;;;;;;
-3;Feather;Jnujabes, Cise Starr & Akin from CYNE;3,75;10;Moncho;;;;;;;;;;;;;;;;;;;;;
-4;End of Beginning;Djo;3,75;10;Alice;;;;;;;;;;;;;;;;;;;;;
-5;Simple As This;Jake Bugg;3,63;6;Andrea;;;;;;;;;;;;;;;;;;;;;
-6;Oh! Sweet Nuthin' - 2015 Remastered;The Velvet Underground;3,63;6;Gianmarco;;;;;;;;;;;;;;;;;;;;;
-7;Angel;Shaggy, Rayvon;3,63;6;Giacomo;;;;;;;;;;;;;;;;;;;;;
-8;Raccoglievo le more;Claver Gold, Michele Venanzoni;3,50;3;Andrea;;;;;;;;;;;;;;;;;;;;;
-9;Ghetto;Akon;3,38;2;Giacomo;;;;;;;;;;;;;;;;;;;;;
-10;Delete Ya;Djo;3,38;2;Giada;;;;;;;;;;;;;;;;;;;;;
-11;No Funeral Without Applause;Marilyn Manson;3,25;0;Gabriele M.;;;;;;;;;;;;;;;;;;;;;
-12;Tin Pan Alley;The Aplles In Stereo;3,00;0;Gianmarco;;;;;;;;;;;;;;;;;;;;;
-13;The Night They Drove Old Dixie Down;Joan Baez;3,00;0;Moncho;;;;;;;;;;;;;;;;;;;;;
-14;Tempi d'oro;Duo bucolico;3,00;0;Gianluca;;;;;;;;;;;;;;;;;;;;;
-15;I Was Made For Lovin' You;KISS;3,00;0;Alice;;;;;;;;;;;;;;;;;;;;;
-16;23;Chayce Beckham;2,75;0;Gabriele M.;;;;;;;;;;;;;;;;;;;;;
-17;The Beginning;Flawed Mangoes;2,63;0;Giada;;;;;;;;;;;;;;;;;;;;;
-18;Isole viaggianti;Ornella Vanoni;2,00;0;Gianluca;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;
+﻿Rank;Titolo;Artista;Media;Punti;Utente
+1;Come A Little Closer;Cage The Elephant;4,00;15;Gianmarco
+2;Pier;Claver Gold, Murubutu;3,88;15;Leonardo
+2;Diamante;Zucchero;3,88;15;Leonardo
+4;China Town;Caparezza;3,93;12;Andrea
+5;Shape of My Heart;Sting;3,79;10;Giada
+6;Feather;Jnujabes, Cise Starr & Akin from CYNE;3,75;10;Moncho
+6;End of Beginning;Djo;3,75;10;Alice
+8;In the Shadows;The Rasmus;3,71;7;Alice
+9;Beware of Darkness - 2014 Remaster;George Harrison;3,64;6;Gabriele B.
+10;Simple As This;Jake Bugg;3,63;6;Andrea
+10;Oh! Sweet Nuthin' - 2015 Remastered;The Velvet Underground;3,63;6;Gianmarco
+10;Angel;Shaggy, Rayvon;3,63;6;Giacomo
+13;Stare bene a metà - 2017 Remaster;Pino Daniele;3,57;5;Giada
+14;Rapp Snitch Knishes;MF DOOM, Mr. Fantastik;3,57;5;Leonardo
+15;Age of Consent - 2015 Remaster;New Order;3,57;5;Gabriele B.
+16;Raccoglievo le more;Claver Gold, Michele Venanzoni;3,50;3;Andrea
+17;Promises;The Cranberries;3,50;2;Alice
+18;Ghetto;Akon;3,38;2;Giacomo
+18;Delete Ya;Djo;3,38;2;Giada
+20;Putting Holes In Happiness;Marilyn Manson;3,36;1;Gabriele M.
+21;Pathosfera;Caparezza;3,36;1;Leonardo
+22;Hallelujah;Leonard Cohen;3,36;1;Giacomo
+23;Bliss;Muse;3,36;1;Giacomo
+24;No Funeral Without Applause;Marilyn Manson;3,25;0;Gabriele M.
+25;Ride;Twenty One Pilots;3,21;0;Elena
+26;Forget Me Notes - Remasterd;Patrice Rushen;3,14;0;Alessandro
+27;Teardrop;Massive Attack, Elizabeth Fraser;3,07;0;Eleonora
+28;Modern Life;Satellite Jockey;3,07;0;Moncho
+29;M.E.;Gary Numan;3,07;0;Moncho
+30;Sunset;The Midnight;3,00;0;Alessandro
+31;He's the Greatest Dancer - 1995 Remaster;Sister Sledge;3,00;0;Sara
+32;Hasta la Raìz;Natalia Lafourcade;3,00;0;Federica
+33;Tin Pan Alley;The Aplles In Stereo;3,00;0;Gianmarco
+33;The Night They Drove Old Dixie Down;Joan Baez;3,00;0;Moncho
+33;Tempi d'oro;Duo bucolico;3,00;0;Gianluca
+33;I Was Made For Lovin' You;KISS;3,00;0;Alice
+37;The Hook;Stephen Malkmus;2,93;0;Gianmarco
+38;Gasati un mondo;Dutch Nazari, Willie Peyote;2,86;0;Elena
+39;Anima Sincera;Santino Cardamone;2,86;0;Andrea
+40;lost boys;mgk, Trippie Redd;2,79;0;Gabriele M.
+41;Hurt (Quiet);Nine Inch Nails;2,79;0;Gianluca
+42;23;Chayce Beckham;2,75;0;Gabriele M.
+43;The Beginning;Flawed Mangoes;2,63;0;Giada
+44;Un'Estate;Mannarino;2,57;0;Gianluca
+45;Lemon Glow;Beach House;2,57;0;Eleonora
+46;Drugs;Tai Verdes;2,57;0;Federica
+47;Parto Naturale;Marte;2,50;0;Sara
+48;Isole viaggianti;Ornella Vanoni;2,00;0;Gianluca
