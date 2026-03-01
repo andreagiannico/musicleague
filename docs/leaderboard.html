@@ -285,7 +285,7 @@
         }));
 
       // default sort: punti desc (se vuoi rank fisso da file, dimmelo e lo rispettiamo)
-      songs.sort((a,b) => b.pointsTotal - a.pointsTotal);
+      songs.sort((a,b) => b.avgTotal - a.avgTotal);
       return songs;
     }
 
@@ -451,5 +451,6 @@
   </script>
 </body>
 </html>
+
 
 
