@@ -271,77 +271,62 @@
           </div>
         </div>
       </div>
-<!-- TOPIC DEL MESE SCORSO -->
+<!-- CARD 4: Topic del mese scorso -->
 <div class="card">
+  <div class="cardPad">
+    <div class="mission">
 
-  <!-- Header stile identico a Missione -->
-  <div style="display:flex; align-items:flex-start; gap:12px; margin-bottom:8px;">
+      <!-- Icona identica a quella del razzo -->
+      <div class="missionIcon">🏆</div>
 
-    <!-- Icona quadrata come il razzo -->
-    <div style="
-      width:44px;
-      height:44px;
-      border-radius:14px;
-      background: linear-gradient(135deg, rgba(255,215,0,.9), rgba(255,170,0,.9));
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      box-shadow:0 8px 20px rgba(0,0,0,.35);
-      flex-shrink:0;
-    ">
-      <span style="font-size:20px;">🏆</span>
-    </div>
+      <div class="missionText">
 
-    <div>
-      <div style="font-size:13px;color:var(--muted2);">
-        Topic Febbraio vincente
+        <!-- Kicker piccolo sopra -->
+        <div class="missionKicker">
+          Topic Febbraio vincente
+        </div>
+
+        <!-- Titolo identico stile missione -->
+        <div class="missionTitle">
+          Topic del mese scorso
+        </div>
+
+        <!-- Immagine adattiva -->
+        <div style="
+          width:100%;
+          margin:14px 0;
+          border-radius:16px;
+          overflow:hidden;
+          border:1px solid var(--border);
+          background:#0e0e16;
+        ">
+          <img src="assets/vincente.png"
+               alt="Topic vincente"
+               style="
+                 width:100%;
+                 height:220px;
+                 object-fit:cover;
+                 display:block;
+               ">
+        </div>
+
+        <!-- Testo centrato come missionSub -->
+        <p class="missionSub" style="text-align:center;">
+          Ogni mese MusicLeague mette in scena una piccola sfida parallela:
+          uno scontro simbolico tra due visioni, due mondi, due modi di vivere.
+          È puro divertimento… ma alla fine qualcuno vince davvero.
+        </p>
+
+        <!-- Bottone centrato -->
+        <div style="display:flex; justify-content:center; margin-top:12px;">
+          <a href="topics.html" class="btn">
+            <span class="emoji">📚</span> Scopri tutti i Topic
+          </a>
+        </div>
+
       </div>
-      <h2 style="margin:2px 0 0 0;">
-        Topic del mese scorso
-      </h2>
     </div>
-
   </div>
-
-  <!-- IMMAGINE ADATTATA -->
-  <div style="
-    width:100%;
-    border-radius:18px;
-    overflow:hidden;
-    border:1px solid var(--border);
-    margin:14px 0;
-    background:#0e0e16;
-  ">
-    <img src="assets/vincente.png"
-         alt="Topic vincente"
-         style="
-           width:100%;
-           max-height:260px;
-           object-fit:contain;
-           display:block;
-           padding:10px;
-         ">
-  </div>
-
-  <!-- TESTO CENTRATO -->
-  <p style="
-    text-align:center;
-    color:var(--muted);
-    font-size:14px;
-    margin-bottom:18px;
-  ">
-    Ogni mese MusicLeague mette in scena una piccola sfida parallela:
-    uno scontro simbolico tra due visioni, due mondi, due modi di vivere.
-    È puro divertimento… ma alla fine qualcuno vince davvero.
-  </p>
-
-  <!-- BOTTONE CENTRATO -->
-  <div style="display:flex; justify-content:center;">
-    <a href="topics.html" class="btn">
-      📚 Scopri tutti i Topic
-    </a>
-  </div>
-
 </div>
 
       
@@ -388,6 +373,7 @@
   </script>
 </body>
 </html>
+
 
 
 
