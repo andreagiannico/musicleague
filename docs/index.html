@@ -293,22 +293,30 @@
 
         <!-- Immagine adattiva -->
         <div style="
-          width:100%;
-          margin:14px 0;
-          border-radius:16px;
-          overflow:hidden;
-          border:1px solid var(--border);
-          background:#0e0e16;
-        ">
-          <img src="assets/vincente.png"
-               alt="Topic vincente"
-               style="
-                 width:100%;
-                 height:220px;
-                 object-fit:cover;
-                 display:block;
-               ">
-        </div>
+  width:100%;
+  margin:14px 0;
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid var(--border);
+  background:#0e0e16;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:12px;
+">
+
+  <img src="assets/vincente.png"
+       alt="Topic vincente"
+       style="
+         max-width:100%;
+         max-height:260px;
+         width:auto;
+         height:auto;
+         object-fit:contain;
+         display:block;
+       ">
+
+</div>
 
         <!-- Testo centrato come missionSub -->
         <p class="missionSub" style="text-align:center;">
@@ -373,6 +381,7 @@
   </script>
 </body>
 </html>
+
 
 
 
