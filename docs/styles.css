@@ -445,3 +445,64 @@ th:first-child, td:first-child{
   color:#ff4d4d;
   font-weight:900;
 }
+/* =========================
+   TOPIC CARD HOME
+========================= */
+
+.topicCard{
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(255,215,0,.08), rgba(125,122,255,.08));
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow:
+    0 20px 60px rgba(0,0,0,.55),
+    0 0 30px rgba(255,215,0,.12);
+}
+
+.topicGrid{
+  display:grid;
+  grid-template-columns: 200px 1fr;
+  gap:18px;
+  align-items:center;
+}
+
+.topicImage{
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.12);
+  background: rgba(0,0,0,.2);
+}
+
+.topicImage img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.topicContent h2{
+  margin:0 0 10px 0;
+}
+
+.topicDesc{
+  color: var(--muted);
+  font-size:14px;
+  margin-bottom:14px;
+  line-height:1.5;
+}
+
+.topicBtn{
+  background: linear-gradient(135deg, rgba(255,215,0,.9), rgba(255,170,0,.9));
+  color:#111;
+  font-weight:800;
+}
+
+@media (max-width:720px){
+  .topicGrid{
+    grid-template-columns: 1fr;
+  }
+
+  .topicImage{
+    height:160px;
+  }
+}
