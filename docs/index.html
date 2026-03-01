@@ -274,24 +274,62 @@
 <!-- TOPIC DEL MESE SCORSO -->
 <div class="card">
 
-  <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
-    <div class="headerAppIcon" style="width:36px;height:36px;border-radius:12px;">
-      <span>🏆</span>
+  <!-- Header stile identico a Missione -->
+  <div style="display:flex; align-items:flex-start; gap:12px; margin-bottom:8px;">
+
+    <!-- Icona quadrata come il razzo -->
+    <div style="
+      width:44px;
+      height:44px;
+      border-radius:14px;
+      background: linear-gradient(135deg, rgba(255,215,0,.9), rgba(255,170,0,.9));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 8px 20px rgba(0,0,0,.35);
+      flex-shrink:0;
+    ">
+      <span style="font-size:20px;">🏆</span>
     </div>
+
     <div>
-      <div style="font-size:13px;color:var(--muted2);">Topic Gennaio vincente</div>
-      <h2 style="margin:0;font-size:20px;">Topic del mese scorso</h2>
+      <div style="font-size:13px;color:var(--muted2);">
+        Topic Febbraio vincente
+      </div>
+      <h2 style="margin:2px 0 0 0;">
+        Topic del mese scorso
+      </h2>
     </div>
+
   </div>
 
-  <!-- IMMAGINE -->
-  <div style="border-radius:16px; overflow:hidden; border:1px solid var(--border); margin-bottom:14px;">
-    <img src="assets/vincente.png" alt="Topic vincente"
-         style="width:100%; height:180px; object-fit:cover; display:block;">
+  <!-- IMMAGINE ADATTATA -->
+  <div style="
+    width:100%;
+    border-radius:18px;
+    overflow:hidden;
+    border:1px solid var(--border);
+    margin:14px 0;
+    background:#0e0e16;
+  ">
+    <img src="assets/vincente.png"
+         alt="Topic vincente"
+         style="
+           width:100%;
+           max-height:260px;
+           object-fit:contain;
+           display:block;
+           padding:10px;
+         ">
   </div>
 
-  <!-- DESCRIZIONE FISSA -->
-  <p class="hint" style="font-size:14px; margin-bottom:16px;">
+  <!-- TESTO CENTRATO -->
+  <p style="
+    text-align:center;
+    color:var(--muted);
+    font-size:14px;
+    margin-bottom:18px;
+  ">
     Ogni mese MusicLeague mette in scena una piccola sfida parallela:
     uno scontro simbolico tra due visioni, due mondi, due modi di vivere.
     È puro divertimento… ma alla fine qualcuno vince davvero.
@@ -350,5 +388,6 @@
   </script>
 </body>
 </html>
+
 
 
