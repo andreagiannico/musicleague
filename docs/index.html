@@ -262,25 +262,29 @@
 
       <!-- CARD 1: Titolo -->
       <div class="card" style="position:relative;">
-        <div class="cardPad">
+        <div class="cardPad" style="text-align:center;">
+
           <a href="info.html" class="infoBtn" aria-label="Informazioni MusicLeague">
             i
           </a>
 
-          <div class="titleRow">
+          <div style="display:flex; justify-content:center; margin-bottom:12px;">
             <div class="appIcon"><span>🎶</span></div>
-            <h1>MusicLeague</h1>
           </div>
+
+          <h1>MusicLeague</h1>
 
           <p class="subtitle">
             Risultati e classifiche pubblicate mese per mese.
           </p>
+
         </div>
       </div>
 
+
       <!-- CARD 2: Bottoni -->
       <div class="card">
-        <div class="cardPad">
+        <div class="cardPad" style="text-align:center;">
           <div class="actions">
             <a class="btn btn-accent" href="leaderboard.html">
               <span class="emoji">📊</span> Classifica Totale
@@ -293,145 +297,143 @@
         </div>
       </div>
 
+
       <!-- CARD 3: Missione del momento -->
       <div class="card">
-        <div class="cardPad">
-          <div class="mission" style="align-items:center;">
+        <div class="cardPad" style="text-align:center;">
+
+          <div style="display:flex; justify-content:center; margin-bottom:10px;">
             <div class="missionIcon" id="missionIcon">🚀</div>
-
-            <div class="missionText">
-              <div class="missionKicker" id="missionKicker">Caricamento…</div>
-              <div class="missionTitle" id="missionTitle"></div>
-              <p class="missionSub" id="missionSub"></p>
-
-              <div class="pills" id="missionPills">
-                <span class="pill">🎶 2 brani a testa</span>
-                <span class="pill">📩 In privato</span>
-                <span class="pill">⏳ Entro il 5</span>
-              </div>
-            </div>
           </div>
+
+          <div class="missionKicker" id="missionKicker">Caricamento…</div>
+
+          <div class="missionTitle" id="missionTitle"></div>
+
+          <p class="missionSub" id="missionSub"></p>
+
+          <div class="pills" id="missionPills" style="justify-content:center;">
+            <span class="pill">🎶 2 brani a testa</span>
+            <span class="pill">📩 In privato</span>
+            <span class="pill">⏳ Entro il 5</span>
+          </div>
+
         </div>
       </div>
+
 
       <!-- CARD 4: Topic del mese scorso -->
       <div class="card">
-        <div class="cardPad">
-          <div class="mission" style="align-items:center;">
+        <div class="cardPad" style="text-align:center;">
 
+          <div style="display:flex; justify-content:center; margin-bottom:10px;">
             <div class="missionIcon">🏆</div>
-
-            <div class="missionText">
-
-              <div class="missionKicker">
-                Topic Febbraio vincente
-              </div>
-
-              <div class="missionTitle">
-                Topic del mese scorso
-              </div>
-
-              <!-- Immagine -->
-              <div style="
-                width:100%;
-                margin:14px 0;
-                border-radius:16px;
-                overflow:hidden;
-                border:1px solid var(--border);
-                background:#0e0e16;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                padding:12px;
-              ">
-                <img src="assets/vincente.png"
-                     alt="Topic vincente"
-                     style="
-                       max-width:100%;
-                       max-height:260px;
-                       width:auto;
-                       height:auto;
-                       object-fit:contain;
-                       display:block;
-                     ">
-              </div>
-
-              <p class="missionSub" style="text-align:center;">
-                Ogni mese MusicLeague mette in scena una piccola sfida parallela:
-                uno scontro simbolico tra due visioni, due mondi, due modi di vivere.
-                È puro divertimento… ma alla fine qualcuno vince davvero.
-              </p>
-
-              <div style="display:flex; justify-content:center; margin-top:12px;">
-                <a href="topics.html" class="btn">
-                  <span class="emoji">📚</span> Scopri tutti i Topic
-                </a>
-              </div>
-
-            </div>
           </div>
+
+          <div class="missionKicker">
+            Topic Febbraio vincente
+          </div>
+
+          <div class="missionTitle">
+            Topic del mese scorso
+          </div>
+
+          <div style="
+            width:100%;
+            margin:18px 0;
+            border-radius:16px;
+            overflow:hidden;
+            border:1px solid rgba(255,255,255,.10);
+            background:#0e0e16;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:14px;
+          ">
+            <img src="assets/vincente.png"
+                 alt="Topic vincente"
+                 style="
+                   max-width:100%;
+                   max-height:260px;
+                   width:auto;
+                   height:auto;
+                   object-fit:contain;
+                   display:block;
+                 ">
+          </div>
+
+          <p class="missionSub">
+            Ogni mese MusicLeague mette in scena una piccola sfida parallela:
+            uno scontro simbolico tra due visioni, due mondi, due modi di vivere.
+            È puro divertimento… ma alla fine qualcuno vince davvero.
+          </p>
+
+          <div style="display:flex; justify-content:center; margin-top:16px;">
+            <a href="topics.html" class="btn">
+              <span class="emoji">📚</span> Scopri tutti i Topic
+            </a>
+          </div>
+
         </div>
       </div>
 
+
       <!-- CARD 5: Shop dei punti -->
       <div class="card">
-  <div class="cardPad" style="text-align:center;">
+        <div class="cardPad" style="text-align:center;">
 
-    <!-- Icona sopra centrata -->
-    <div style="display:flex; justify-content:center; margin-bottom:10px;">
-      <div class="missionIcon">🛍️</div>
-    </div>
+          <div style="display:flex; justify-content:center; margin-bottom:10px;">
+            <div class="missionIcon">🛍️</div>
+          </div>
 
-    <div class="missionKicker">
-      Area Premium
-    </div>
+          <div class="missionKicker">
+            Area Premium
+          </div>
 
-    <div class="missionTitle">
-      Shop dei Punti
-    </div>
+          <div class="missionTitle">
+            Shop dei Punti
+          </div>
 
-    <!-- Immagine -->
-    <div style="
-      width:100%;
-      margin:18px 0;
-      border-radius:16px;
-      overflow:hidden;
-      border:1px solid rgba(255,255,255,.10);
-      background:#0e0e16;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:14px;
-    ">
-      <img src="assets/shop.png"
-           alt="Shop MusicLeague"
-           style="
-             max-width:100%;
-             max-height:240px;
-             width:auto;
-             height:auto;
-             object-fit:contain;
-             display:block;
-           ">
-    </div>
+          <div style="
+            width:100%;
+            margin:18px 0;
+            border-radius:16px;
+            overflow:hidden;
+            border:1px solid rgba(255,255,255,.10);
+            background:#0e0e16;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:14px;
+          ">
+            <img src="assets/shop.png"
+                 alt="Shop MusicLeague"
+                 style="
+                   max-width:100%;
+                   max-height:240px;
+                   width:auto;
+                   height:auto;
+                   object-fit:contain;
+                   display:block;
+                 ">
+          </div>
 
-    <p class="missionSub" style="text-align:center;">
-      I punti non servono solo a vincere.
-      Servono a decidere, cambiare, influenzare.
-    </p>
+          <p class="missionSub">
+            I punti non servono solo a vincere.
+            Servono a decidere, cambiare, influenzare.
+          </p>
 
-    <div style="display:flex; justify-content:center; margin-top:16px;">
-      <a href="shop.html" class="btn btn-accent">
-        <span class="emoji">💎</span> Entra nello Shop
-      </a>
-    </div>
+          <div style="display:flex; justify-content:center; margin-top:16px;">
+            <a href="shop.html" class="btn btn-accent">
+              <span class="emoji">💎</span> Entra nello Shop
+            </a>
+          </div>
 
-  </div>
-</div>
+        </div>
+      </div>
 
     </div>
   </div>
-
   <script>
     (function(){
       const now = new Date();
@@ -470,6 +472,7 @@
   </script>
 </body>
 </html>
+
 
 
 
