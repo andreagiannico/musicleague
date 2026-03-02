@@ -21,7 +21,32 @@
   background:#0e0e16;
   padding:18px;
 }
+.topBar{
+  position:fixed;
+  top:20px;
+  right:20px;
+  z-index:1000;
+}
 
+.homeBtn{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 16px;
+  border-radius:14px;
+  text-decoration:none;
+  font-weight:600;
+  font-size:14px;
+  color:white;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);
+  backdrop-filter:blur(16px);
+  transition:.2s;
+}
+
+.homeBtn:hover{
+  background:rgba(255,255,255,.14);
+}
 .selectPremium{
   display:inline-flex;
   align-items:center;
@@ -75,6 +100,11 @@
 </head>
 
 <body>
+  <div class="topBar">
+  <a href="index.html" class="homeBtn">
+    ← Home
+  </a>
+</div>
 <div class="bg"></div>
 
 <div class="wrap">
