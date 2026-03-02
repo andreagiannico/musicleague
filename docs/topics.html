@@ -40,6 +40,37 @@
   font-weight:600;
   outline:none;
 }
+.tableWrap table{
+  width:100%;
+  table-layout:fixed;
+  border-collapse:collapse;
+}
+
+.tableWrap th,
+.tableWrap td{
+  width:33.333%;
+  text-align:center;
+  padding:14px 10px;
+}
+
+.tableWrap th{
+  font-weight:700;
+  font-size:14px;
+  color:var(--muted2);
+  border-bottom:1px solid var(--border);
+}
+
+.tableWrap td{
+  font-size:15px;
+}
+
+.tableWrap tbody tr{
+  transition:background .2s ease;
+}
+
+.tableWrap tbody tr:hover{
+  background:rgba(255,255,255,.04);
+}
 </style>
 </head>
 
