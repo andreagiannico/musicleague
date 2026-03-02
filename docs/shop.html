@@ -17,8 +17,6 @@
       --radius: 22px;
       --accentA: rgba(90,200,250,.95);
       --accentB: rgba(125,122,255,.95);
-      --goldA: rgba(255,214,10,.18);
-      --goldB: rgba(255,214,10,.42);
     }
 
     *{ box-sizing:border-box; }
@@ -150,27 +148,6 @@
       line-height:1.4;
     }
 
-    /* pills */
-    .pills{
-      margin-top:12px;
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      justify-content:center;
-    }
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      font-size:12px;
-      padding:6px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.10);
-      color: rgba(255,255,255,.78);
-      white-space:nowrap;
-    }
-
     /* section */
     .sectionTitle{
       margin:0;
@@ -182,6 +159,17 @@
       margin:6px 0 0 0;
       color:var(--muted);
       font-size:13px;
+      line-height:1.4;
+    }
+
+    .hintBox{
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius:18px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      color: rgba(255,255,255,.80);
+      font-size:12.5px;
       line-height:1.4;
     }
 
@@ -201,7 +189,7 @@
       box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
       display:flex;
       flex-direction:column;
-      min-height: 190px;
+      min-height: 185px;
     }
 
     .productTop{
@@ -229,8 +217,8 @@
       gap:6px;
       padding:7px 10px;
       border-radius:999px;
-      background: rgba(255,214,10,.10);
-      border: 1px solid rgba(255,214,10,.30);
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
       color: rgba(255,255,255,.92);
       font-weight:900;
       font-size:12px;
@@ -299,23 +287,6 @@
       border: 1px solid rgba(255,255,255,.14);
     }
 
-    .hintBox{
-      margin-top:12px;
-      padding:12px 14px;
-      border-radius:18px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.10);
-      color: rgba(255,255,255,.80);
-      font-size:12.5px;
-      line-height:1.4;
-    }
-
-    .divider{
-      height:1px;
-      background: rgba(255,255,255,.10);
-      margin:14px 0;
-    }
-
     @media (max-width: 860px){
       .grid{ grid-template-columns: 1fr 1fr; }
     }
@@ -348,14 +319,8 @@
           <div class="heroIcon">🛍️</div>
           <h1>Shop dei Punti</h1>
           <p class="subtitle">
-            I punti non servono solo a vantarsi. Servono a cambiare le regole (con stile).
+            Qui i punti si trasformano in poteri. Scegli, richiedi, gioca meglio.
           </p>
-
-          <div class="pills">
-            <span class="pill">💎 Spendi punti</span>
-            <span class="pill">🧠 Influenza il gioco</span>
-            <span class="pill">🎭 Zero pietà</span>
-          </div>
         </div>
       </div>
 
@@ -364,100 +329,83 @@
         <div class="cardPad">
           <div class="sectionTitle">Come funziona</div>
           <p class="sectionSub">
-            Scegli un “potere”, controlla il costo e poi <b>richiedilo</b>.
-            Per ora lo Shop è una vetrina: la conferma avviene nel gruppo (o con un tuo messaggio).
+            Seleziona un prodotto e premi <b>Richiedi</b>: si apre WhatsApp con un messaggio già pronto.
           </p>
 
           <div class="hintBox">
-            <b>Nota bene:</b> se due persone vogliono la stessa cosa nello stesso mese, vale la regola non scritta:
-            <i>chi arriva prima... se la gode.</i>
+            <b>Nota:</b> Topic e Bacheca sono <b>1 per mese</b> (vale chi richiede per primo). Il cambio nome è sempre disponibile.
           </div>
         </div>
       </div>
 
-      <!-- PRODOTTI -->
+      <!-- CATALOGO -->
       <div class="card">
         <div class="cardPad">
           <div class="sectionTitle">Catalogo</div>
-          <p class="sectionSub">Pochi prodotti. Molto potere. Zero scuse.</p>
+          <p class="sectionSub">Poche opzioni, zero confusione.</p>
 
           <div class="grid">
 
-            <!-- PRODOTTO 1 -->
+            <!-- CAMBIO NOME -->
             <div class="product">
               <div class="productTop">
                 <div class="prodIcon">🪪</div>
-                <div class="cost">💰 10 punti</div>
+                <div class="cost">💰 50 punti</div>
               </div>
 
               <div>
                 <p class="prodName">Cambio nome</p>
                 <p class="prodDesc">
-                  Cambia nome quando vuoi. Reinventati. Diventa “DJ Dramma”. O “Anonimo 3”.
-                  (Il caos è incluso nel prezzo.)
+                  Cambia il tuo nome nel gioco. Quando vuoi.
                 </p>
               </div>
 
               <div class="prodFooter">
                 <div class="tag">Sempre disponibile</div>
-                <a class="btn" href="#" onclick="requestItem('Cambio nome'); return false;">✨ Richiedi</a>
+                <a class="btn" href="#" onclick="requestItem('Cambio nome', 50); return false;">✨ Richiedi</a>
               </div>
             </div>
 
-            <!-- PRODOTTO 2 -->
+            <!-- TOPIC -->
             <div class="product">
               <div class="productTop">
                 <div class="prodIcon">🗳️</div>
-                <div class="cost">💰 10 punti</div>
+                <div class="cost">💰 15 punti</div>
               </div>
 
               <div>
-                <p class="prodName">Decidi il Topic del mese</p>
+                <p class="prodName">Decidi il Topic</p>
                 <p class="prodDesc">
-                  Scegli tu il Topic del mese successivo. Una domanda divisiva.
-                  Un derby. Una faida. Una guerra civile in miniatura.
+                  Scegli il Topic del mese successivo.
                 </p>
               </div>
 
               <div class="prodFooter">
                 <div class="tag">1 al mese</div>
-                <a class="btn" href="#" onclick="requestItem('Decidi il Topic'); return false;">🔥 Richiedi</a>
+                <a class="btn" href="#" onclick="requestItem('Decidi il Topic del mese successivo', 15); return false;">🔥 Richiedi</a>
               </div>
             </div>
 
-            <!-- PRODOTTO 3 -->
+            <!-- BACHECA -->
             <div class="product">
               <div class="productTop">
                 <div class="prodIcon">📌</div>
-                <div class="cost">💰 20 punti</div>
+                <div class="cost">💰 10 punti</div>
               </div>
 
               <div>
                 <p class="prodName">Bacheca del mese</p>
                 <p class="prodDesc">
-                  Ti prendi uno spazio nel mese successivo per pubblicare
-                  un pensiero, un mini-saggio, un disegno o un manifesto.
+                  Uno spazio in bacheca per il mese successivo.
                 </p>
               </div>
 
               <div class="prodFooter">
                 <div class="tag">1 al mese</div>
-                <a class="btn btn-accent" href="#" onclick="requestItem('Bacheca del mese'); return false;">💎 Richiedi</a>
+                <a class="btn btn-accent" href="#" onclick="requestItem('Bacheca del mese successivo', 10); return false;">💎 Richiedi</a>
               </div>
             </div>
 
-          </div>
-
-          <div class="divider"></div>
-
-          <div class="sectionTitle">Coming soon</div>
-          <p class="sectionSub">
-            Qui atterrano le prossime opzioni quando le aggiungi (e quando il gruppo è pronto a soffrire).
-          </p>
-
-          <div class="hintBox">
-            <b>Pro tip:</b> quando aggiungi nuove voci, dimmelo e ti preparo le card “identiche” a queste,
-            così lo Shop resta sempre premium e coerente.
           </div>
         </div>
       </div>
@@ -466,8 +414,30 @@
   </div>
 
   <script>
-    function requestItem(name){
-      alert("Richiesta inviata (più o meno): " + name + "\\n\\nPer ora scrivi nel gruppo o al Master per confermare.");
+    // ✅ METTI QUI IL TUO NUMERO (formato internazionale, senza + e senza spazi)
+    // Esempio: "393331112222"
+    const WHATSAPP_NUMBER = "3391892331";
+
+    function encodeWhatsAppText(text){
+      return encodeURIComponent(text);
+    }
+
+    function requestItem(name, cost){
+      const msg =
+`Ciao! Vorrei richiedere dallo Shop:
+- Prodotto: ${name}
+- Costo: ${cost} punti
+
+Grazie!`;
+
+      // Se non hai ancora inserito il numero, apro WhatsApp senza chat specifica (fallback)
+      const hasNumber = WHATSAPP_NUMBER && !WHATSAPP_NUMBER.includes("X");
+
+      const url = hasNumber
+        ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeWhatsAppText(msg)}`
+        : `https://wa.me/?text=${encodeWhatsAppText(msg)}`;
+
+      window.open(url, "_blank", "noopener");
     }
   </script>
 </body>
