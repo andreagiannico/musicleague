@@ -6,39 +6,39 @@
 <title>Topic - MusicLeague</title>
 
 <link rel="stylesheet" href="styles.css" />
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-.chartWrap{
-  max-width:500px;
-  margin:20px auto;
-}
-.smallChart{
-  max-width:350px;
-  margin:10px auto 30px auto;
-}
+.chartWrap{ max-width:520px; margin:30px auto; }
+.smallChart{ max-width:380px; margin:20px auto 40px auto; }
+
 .topicWinnerImg{
   width:100%;
-  max-height:280px;
+  max-height:300px;
   object-fit:contain;
-  border-radius:18px;
+  border-radius:22px;
   border:1px solid var(--border);
   background:#0e0e16;
-  padding:12px;
+  padding:18px;
 }
-.selectWrap{
-  display:flex;
-  justify-content:center;
-  margin:10px 0 20px 0;
+
+.selectPremium{
+  display:inline-flex;
+  align-items:center;
+  gap:14px;
+  padding:14px 22px;
+  border-radius:22px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);
+  backdrop-filter:blur(16px);
 }
-select{
-  padding:10px 14px;
-  border-radius:12px;
-  background:#1a1a28;
+.selectPremium select{
+  background:transparent;
+  border:none;
   color:white;
-  border:1px solid var(--border);
-  font-size:14px;
+  font-size:16px;
+  font-weight:600;
+  outline:none;
 }
 </style>
 </head>
@@ -48,139 +48,42 @@ select{
 
 <div class="wrap">
 
-  <!-- HEADER -->
+  <!-- HEADER PREMIUM -->
   <div class="card card-users">
-  <div class="cardPad" style="text-align:center;">
+    <div class="cardPad" style="text-align:center;">
+      <div style="display:flex; justify-content:center; margin-bottom:12px;">
+        <div class="appIcon" style="width:60px;height:60px;border-radius:20px;font-size:28px;">
+          🏆
+        </div>
+      </div>
 
-    <div style="display:flex; justify-content:center; margin-bottom:10px;">
-      <div class="appIcon" style="
-        width:60px;
-        height:60px;
-        border-radius:20px;
-        font-size:28px;
-        box-shadow:0 12px 40px rgba(0,0,0,.4);
-      ">
-        🏆
+      <h1 style="margin:0;font-size:32px;font-weight:800;">
+        Topic Hall
+      </h1>
+
+      <p style="margin-top:8px;color:var(--muted);">
+        Vince il topic con più punti.  
+        I voti raccontano la preferenza.
+      </p>
+    </div>
+  </div>
+
+  <!-- SELECT -->
+  <div class="card">
+    <div class="cardPad" style="text-align:center;">
+      <div class="selectPremium">
+        📅
+        <select id="monthSelect"></select>
       </div>
     </div>
-
-    <h1 style="
-      margin:0;
-      font-size:32px;
-      letter-spacing:-0.5px;
-      font-weight:800;
-    ">
-      Topic Hall
-    </h1>
-
-    <p style="
-      margin-top:8px;
-      color:var(--muted);
-      font-size:15px;
-    ">
-      Vince il topic con più punti.
-      I voti raccontano la preferenza.
-      I punti decidono il risultato.
-    </p>
-
   </div>
-</div>
 
-  <!-- SELETTORE MESE -->
+  <!-- RESULTS -->
   <div class="card">
-  <div class="cardPad" style="text-align:center;">
-
-    <div style="
-      display:inline-flex;
-      align-items:center;
-      gap:12px;
-      padding:12px 18px;
-      border-radius:18px;
-      background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.12);
-      backdrop-filter:blur(16px);
-    ">
-
-      <span style="font-weight:600;color:var(--muted2);">
-        📅 Mese
-      </span>
-
-      <select id="monthSelect" style="
-        background:transparent;
-        border:none;
-        color:white;
-        font-size:16px;
-        font-weight:600;
-        outline:none;
-        cursor:pointer;
-      "></select>
-
+    <div class="cardPad" id="resultsArea" style="text-align:center;">
+      Caricamento…
     </div>
-
   </div>
-</div>
-
-  <!-- RISULTATI -->
-  const html = `
-  <div style="text-align:center;">
-
-    <div style="
-      display:inline-block;
-      padding:6px 14px;
-      border-radius:999px;
-      background:rgba(255,215,0,.12);
-      border:1px solid rgba(255,215,0,.4);
-      font-size:13px;
-      margin-bottom:14px;
-      letter-spacing:.5px;
-    ">
-      🥇 VINCITORE
-    </div>
-
-    <h2 style="
-      margin:0 0 14px 0;
-      font-size:26px;
-      font-weight:800;
-      letter-spacing:-0.3px;
-    ">
-      ${winner.topic}
-    </h2>
-
-    <img src="assets/topics/${monthId}.png"
-         class="topicWinnerImg"
-         alt="Topic vincente">
-
-  </div>
-
-  <div class="chartWrap">
-    <canvas id="pointsChart"></canvas>
-  </div>
-
-  <div class="smallChart">
-    <canvas id="votesChart"></canvas>
-  </div>
-
-  <div class="tableWrap">
-    <table>
-      <thead>
-        <tr>
-          <th>Topic</th>
-          <th>Voti</th>
-          <th>Punti</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${data.map(d=>`
-          <tr>
-            <td>${d.topic}</td>
-            <td>${d.voti}</td>
-            <td class="points">${d.punti}</td>
-          </tr>
-        `).join("")}
-      </tbody>
-    </table>
-  </div>
-`;
 
 </div>
 
@@ -189,7 +92,6 @@ const MANIFEST_URL = "data/topics/manifest.json";
 
 function parseCSV(text){
   const lines = text.trim().split(/\r?\n/);
-  const header = lines[0].split(";");
   return lines.slice(1).map(line=>{
     const cols = line.split(";");
     return {
@@ -212,108 +114,113 @@ async function loadMonthData(id){
 }
 
 function renderCharts(data, monthId){
+
   const winner = [...data].sort((a,b)=>b.punti-a.punti)[0];
 
-  const html = `
-    <h2 style="text-align:center;margin-top:0;">Vincitore: ${winner.topic}</h2>
+  document.getElementById("resultsArea").innerHTML = `
+    <div>
 
-    <img src="assets/topics/${monthId}.png"
-         class="topicWinnerImg"
-         alt="Topic vincente">
+      <div style="
+        display:inline-block;
+        padding:6px 16px;
+        border-radius:999px;
+        background:rgba(255,215,0,.15);
+        border:1px solid rgba(255,215,0,.6);
+        margin-bottom:16px;
+        font-size:13px;
+      ">
+        🥇 VINCITORE
+      </div>
 
-    <div class="chartWrap">
-      <canvas id="pointsChart"></canvas>
-    </div>
+      <h2 style="margin:0 0 18px 0;font-size:26px;font-weight:800;">
+        ${winner.topic}
+      </h2>
 
-    <div class="smallChart">
-      <canvas id="votesChart"></canvas>
-    </div>
+      <img src="assets/topics/${monthId}.png"
+           class="topicWinnerImg"
+           alt="Topic vincente">
 
-    <div class="tableWrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Topic</th>
-            <th>Voti</th>
-            <th>Punti</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${data.map(d=>`
+      <div class="chartWrap">
+        <canvas id="pointsChart"></canvas>
+      </div>
+
+      <div class="smallChart">
+        <canvas id="votesChart"></canvas>
+      </div>
+
+      <div class="tableWrap">
+        <table>
+          <thead>
             <tr>
-              <td>${d.topic}</td>
-              <td>${d.voti}</td>
-              <td class="points">${d.punti}</td>
+              <th>Topic</th>
+              <th>Voti</th>
+              <th>Punti</th>
             </tr>
-          `).join("")}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            ${data.map(d=>`
+              <tr>
+                <td>${d.topic}</td>
+                <td>${d.voti}</td>
+                <td class="points">${d.punti}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+
     </div>
   `;
 
-  document.getElementById("resultsArea").innerHTML = html;
-
   new Chart(document.getElementById("pointsChart"),{
-  type:"doughnut",
-  data:{
-    labels:data.map(d=>d.topic),
-    datasets:[{
-      data:data.map(d=>d.punti),
-      backgroundColor:[
-        "#7B7AFF",
-        "#5AC8FA",
-        "#FFD60A",
-        "#FF375F",
-        "#30D158"
-      ],
-      borderWidth:0
-    }]
-  },
-  options:{
-    cutout:"65%",
-    plugins:{
-      legend:{
-        position:"bottom",
-        labels:{
-          color:"white",
-          padding:20,
-          font:{ size:14, weight:"600" }
+    type:"doughnut",
+    data:{
+      labels:data.map(d=>d.topic),
+      datasets:[{
+        data:data.map(d=>d.punti),
+        backgroundColor:["#7B7AFF","#5AC8FA","#FFD60A","#FF375F","#30D158"],
+        borderWidth:0
+      }]
+    },
+    options:{
+      cutout:"70%",
+      plugins:{
+        legend:{
+          position:"bottom",
+          labels:{
+            color:"white",
+            padding:20,
+            font:{ size:14, weight:"600" }
+          }
         }
       }
     }
-  }
-});
+  });
 
   new Chart(document.getElementById("votesChart"),{
-  type:"doughnut",
-  data:{
-    labels:data.map(d=>d.topic),
-    datasets:[{
-      data:data.map(d=>d.voti),
-      backgroundColor:[
-        "#7B7AFF88",
-        "#5AC8FA88",
-        "#FFD60A88",
-        "#FF375F88",
-        "#30D15888"
-      ],
-      borderWidth:0
-    }]
-  },
-  options:{
-    cutout:"60%",
-    plugins:{
-      legend:{
-        position:"bottom",
-        labels:{
-          color:"white",
-          padding:15,
-          font:{ size:12 }
+    type:"doughnut",
+    data:{
+      labels:data.map(d=>d.topic),
+      datasets:[{
+        data:data.map(d=>d.voti),
+        backgroundColor:["#7B7AFF88","#5AC8FA88","#FFD60A88","#FF375F88","#30D15888"],
+        borderWidth:0
+      }]
+    },
+    options:{
+      cutout:"65%",
+      plugins:{
+        legend:{
+          position:"bottom",
+          labels:{
+            color:"white",
+            padding:15,
+            font:{ size:12 }
+          }
         }
       }
     }
-  }
-});
+  });
 }
 
 (async function init(){
