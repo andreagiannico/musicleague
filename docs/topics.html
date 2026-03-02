@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Topic - MusicLeague</title>
+
+<link rel="stylesheet" href="styles.css" />
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+.chartWrap{
+  max-width:500px;
+  margin:20px auto;
+}
+.smallChart{
+  max-width:350px;
+  margin:10px auto 30px auto;
+}
+.topicWinnerImg{
+  width:100%;
+  max-height:280px;
+  object-fit:contain;
+  border-radius:18px;
+  border:1px solid var(--border);
+  background:#0e0e16;
+  padding:12px;
+}
+.selectWrap{
+  display:flex;
+  justify-content:center;
+  margin:10px 0 20px 0;
+}
+select{
+  padding:10px 14px;
+  border-radius:12px;
+  background:#1a1a28;
+  color:white;
+  border:1px solid var(--border);
+  font-size:14px;
+}
+</style>
+</head>
+
+<body>
+<div class="bg"></div>
+
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="card">
+    <div class="cardPad">
+      <div class="titleRow">
+        <div class="appIcon"><span>🏆</span></div>
+        <h1>Topic</h1>
+      </div>
+      <p class="subtitle">
+        Vince il topic con più punti, non con più voti.
+      </p>
+    </div>
+  </div>
+
+  <!-- SELETTORE MESE -->
+  <div class="card">
+    <div class="cardPad">
+      <div class="selectWrap">
+        <select id="monthSelect"></select>
+      </div>
+    </div>
+  </div>
+
+  <!-- RISULTATI -->
+  <div class="card">
+    <div class="cardPad" id="resultsArea">
+      Caricamento…
+    </div>
+  </div>
+
+</div>
+
+<script>
+const MANIFEST_URL = "data/topics/manifest.json";
+
+function parseCSV(text){
+  const lines = text.trim().split(/\r?\n/);
+  const header = lines[0].split(";");
+  return lines.slice(1).map(line=>{
+    const cols = line.split(";");
+    return {
+      topic: cols[0],
+      voti: parseInt(cols[1]),
+      punti: parseInt(cols[2])
+    };
+  });
+}
+
+async function loadManifest(){
+  const res = await fetch(MANIFEST_URL);
+  return await res.json();
+}
+
+async function loadMonthData(id){
+  const res = await fetch(`data/topics/${id}.csv`);
+  const text = await res.text();
+  return parseCSV(text);
+}
+
+function renderCharts(data, monthId){
+  const winner = [...data].sort((a,b)=>b.punti-a.punti)[0];
+
+  const html = `
+    <h2 style="text-align:center;margin-top:0;">Vincitore: ${winner.topic}</h2>
+
+    <img src="assets/topics/${monthId}.png"
+         class="topicWinnerImg"
+         alt="Topic vincente">
+
+    <div class="chartWrap">
+      <canvas id="pointsChart"></canvas>
+    </div>
+
+    <div class="smallChart">
+      <canvas id="votesChart"></canvas>
+    </div>
+
+    <div class="tableWrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Topic</th>
+            <th>Voti</th>
+            <th>Punti</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${data.map(d=>`
+            <tr>
+              <td>${d.topic}</td>
+              <td>${d.voti}</td>
+              <td class="points">${d.punti}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  document.getElementById("resultsArea").innerHTML = html;
+
+  new Chart(document.getElementById("pointsChart"),{
+    type:"pie",
+    data:{
+      labels:data.map(d=>d.topic),
+      datasets:[{
+        data:data.map(d=>d.punti)
+      }]
+    }
+  });
+
+  new Chart(document.getElementById("votesChart"),{
+    type:"pie",
+    data:{
+      labels:data.map(d=>d.topic),
+      datasets:[{
+        data:data.map(d=>d.voti)
+      }]
+    }
+  });
+}
+
+(async function init(){
+  const manifest = await loadManifest();
+  const select = document.getElementById("monthSelect");
+
+  manifest.months.forEach(m=>{
+    const opt = document.createElement("option");
+    opt.value = m.id;
+    opt.textContent = m.label;
+    select.appendChild(opt);
+  });
+
+  const last = manifest.months[manifest.months.length-1];
+  select.value = last.id;
+
+  async function update(){
+    const data = await loadMonthData(select.value);
+    renderCharts(data, select.value);
+  }
+
+  select.addEventListener("change", update);
+  update();
+})();
+</script>
+
+</body>
+</html>
