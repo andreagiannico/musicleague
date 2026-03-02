@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Shop dei Punti - MusicLeague</title>
+
+  <style>
+    :root{
+      --bg0:#07070b;
+      --card: rgba(22, 22, 34, .62);
+      --stroke: rgba(255,255,255,.10);
+      --text:#ffffff;
+      --muted: rgba(255,255,255,.72);
+      --muted2: rgba(255,255,255,.55);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius: 22px;
+      --accentA: rgba(90,200,250,.95);
+      --accentB: rgba(125,122,255,.95);
+      --goldA: rgba(255,214,10,.18);
+      --goldB: rgba(255,214,10,.42);
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      color:var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+                   "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+      background:
+        linear-gradient(180deg, rgba(5,5,8,.70), rgba(5,5,8,.70)),
+        url("assets/hero-submit.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background:
+        radial-gradient(900px 520px at 50% 35%, rgba(0,0,0,.15), transparent 60%),
+        radial-gradient(1200px 800px at 50% 120%, rgba(0,0,0,.45), transparent 55%),
+        linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.35));
+      pointer-events:none;
+      z-index:0;
+    }
+
+    .wrap{
+      position:relative;
+      z-index:1;
+      min-height:100vh;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding:28px 16px 44px 16px;
+    }
+
+    .stack{
+      width:100%;
+      max-width: 920px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      align-items:center;
+    }
+
+    .card{
+      width: min(860px, 100%);
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      overflow:hidden;
+    }
+
+    .cardPad{ padding:18px 18px; }
+
+    /* top actions */
+    .topRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .homeBtn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      height:38px;
+      padding:0 14px;
+      border-radius:14px;
+      text-decoration:none;
+      color:rgba(255,255,255,.90);
+      font-weight:800;
+      font-size:13px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: transform .12s ease, background .12s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .homeBtn:hover{ transform:translateY(-1px); background:rgba(255,255,255,.14); }
+    .homeBtn:active{ transform:scale(.98); }
+
+    /* header hero */
+    .hero{
+      text-align:center;
+      padding:22px 18px;
+      background:
+        radial-gradient(1200px 260px at 50% -10%, rgba(90,200,250,.18), transparent 60%),
+        radial-gradient(900px 240px at 75% 0%, rgba(125,122,255,.18), transparent 55%);
+    }
+
+    .heroIcon{
+      width:62px;
+      height:62px;
+      border-radius:22px;
+      display:grid;
+      place-items:center;
+      margin:0 auto 12px auto;
+      font-size:28px;
+      background: linear-gradient(135deg, var(--accentA), var(--accentB));
+      box-shadow: 0 14px 44px rgba(0,0,0,.55);
+      border:1px solid rgba(255,255,255,.14);
+    }
+
+    h1{
+      margin:0;
+      font-size:32px;
+      letter-spacing:-.5px;
+      line-height:1.1;
+    }
+
+    .subtitle{
+      margin:10px 0 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height:1.4;
+    }
+
+    /* pills */
+    .pills{
+      margin-top:12px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      justify-content:center;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      font-size:12px;
+      padding:6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.10);
+      color: rgba(255,255,255,.78);
+      white-space:nowrap;
+    }
+
+    /* section */
+    .sectionTitle{
+      margin:0;
+      font-weight:900;
+      letter-spacing:-.25px;
+      font-size:16px;
+    }
+    .sectionSub{
+      margin:6px 0 0 0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.4;
+    }
+
+    /* grid products */
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .product{
+      border-radius:18px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      padding:14px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+      display:flex;
+      flex-direction:column;
+      min-height: 190px;
+    }
+
+    .productTop{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+
+    .prodIcon{
+      width:42px;
+      height:42px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      font-size:18px;
+      background: linear-gradient(135deg, rgba(90,200,250,.22), rgba(125,122,255,.22));
+      border: 1px solid rgba(255,255,255,.12);
+    }
+
+    .cost{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:7px 10px;
+      border-radius:999px;
+      background: rgba(255,214,10,.10);
+      border: 1px solid rgba(255,214,10,.30);
+      color: rgba(255,255,255,.92);
+      font-weight:900;
+      font-size:12px;
+      white-space:nowrap;
+    }
+
+    .prodName{
+      margin:0;
+      font-size:15px;
+      font-weight:900;
+      letter-spacing:-.2px;
+    }
+
+    .prodDesc{
+      margin:6px 0 0 0;
+      color:var(--muted);
+      font-size:12.5px;
+      line-height:1.35;
+      flex:1;
+    }
+
+    .prodFooter{
+      margin-top:12px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .tag{
+      font-size:12px;
+      color:rgba(255,255,255,.72);
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.10);
+      padding:6px 10px;
+      border-radius:999px;
+      white-space:nowrap;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      height:40px;
+      padding:0 14px;
+      border-radius: 14px;
+      text-decoration:none;
+      color: #0b0b10;
+      font-weight: 900;
+      font-size: 13px;
+      background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.78));
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: 0 10px 22px rgba(0,0,0,.35);
+      transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      white-space:nowrap;
+    }
+    .btn:hover{ transform: translateY(-1px); box-shadow: 0 14px 28px rgba(0,0,0,.42); filter: brightness(1.03); }
+    .btn:active{ transform: translateY(0px) scale(.99); box-shadow: 0 10px 20px rgba(0,0,0,.38); }
+
+    .btn-accent{
+      color: #fff;
+      background: linear-gradient(135deg, var(--accentA), var(--accentB));
+      border: 1px solid rgba(255,255,255,.14);
+    }
+
+    .hintBox{
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius:18px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      color: rgba(255,255,255,.80);
+      font-size:12.5px;
+      line-height:1.4;
+    }
+
+    .divider{
+      height:1px;
+      background: rgba(255,255,255,.10);
+      margin:14px 0;
+    }
+
+    @media (max-width: 860px){
+      .grid{ grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 560px){
+      .grid{ grid-template-columns: 1fr; }
+      h1{ font-size:28px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="stack">
+
+      <!-- TOP BAR -->
+      <div class="card">
+        <div class="cardPad">
+          <div class="topRow">
+            <a class="homeBtn" href="index.html">← Home</a>
+            <div style="color:rgba(255,255,255,.55); font-size:12px; font-weight:700;">
+              MusicLeague • Shop
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HERO -->
+      <div class="card">
+        <div class="hero">
+          <div class="heroIcon">🛍️</div>
+          <h1>Shop dei Punti</h1>
+          <p class="subtitle">
+            I punti non servono solo a vantarsi. Servono a cambiare le regole (con stile).
+          </p>
+
+          <div class="pills">
+            <span class="pill">💎 Spendi punti</span>
+            <span class="pill">🧠 Influenza il gioco</span>
+            <span class="pill">🎭 Zero pietà</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- COME FUNZIONA -->
+      <div class="card">
+        <div class="cardPad">
+          <div class="sectionTitle">Come funziona</div>
+          <p class="sectionSub">
+            Scegli un “potere”, controlla il costo e poi <b>richiedilo</b>.
+            Per ora lo Shop è una vetrina: la conferma avviene nel gruppo (o con un tuo messaggio).
+          </p>
+
+          <div class="hintBox">
+            <b>Nota bene:</b> se due persone vogliono la stessa cosa nello stesso mese, vale la regola non scritta:
+            <i>chi arriva prima... se la gode.</i>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODOTTI -->
+      <div class="card">
+        <div class="cardPad">
+          <div class="sectionTitle">Catalogo</div>
+          <p class="sectionSub">Pochi prodotti. Molto potere. Zero scuse.</p>
+
+          <div class="grid">
+
+            <!-- PRODOTTO 1 -->
+            <div class="product">
+              <div class="productTop">
+                <div class="prodIcon">🪪</div>
+                <div class="cost">💰 10 punti</div>
+              </div>
+
+              <div>
+                <p class="prodName">Cambio nome</p>
+                <p class="prodDesc">
+                  Cambia nome quando vuoi. Reinventati. Diventa “DJ Dramma”. O “Anonimo 3”.
+                  (Il caos è incluso nel prezzo.)
+                </p>
+              </div>
+
+              <div class="prodFooter">
+                <div class="tag">Sempre disponibile</div>
+                <a class="btn" href="#" onclick="requestItem('Cambio nome'); return false;">✨ Richiedi</a>
+              </div>
+            </div>
+
+            <!-- PRODOTTO 2 -->
+            <div class="product">
+              <div class="productTop">
+                <div class="prodIcon">🗳️</div>
+                <div class="cost">💰 10 punti</div>
+              </div>
+
+              <div>
+                <p class="prodName">Decidi il Topic del mese</p>
+                <p class="prodDesc">
+                  Scegli tu il Topic del mese successivo. Una domanda divisiva.
+                  Un derby. Una faida. Una guerra civile in miniatura.
+                </p>
+              </div>
+
+              <div class="prodFooter">
+                <div class="tag">1 al mese</div>
+                <a class="btn" href="#" onclick="requestItem('Decidi il Topic'); return false;">🔥 Richiedi</a>
+              </div>
+            </div>
+
+            <!-- PRODOTTO 3 -->
+            <div class="product">
+              <div class="productTop">
+                <div class="prodIcon">📌</div>
+                <div class="cost">💰 20 punti</div>
+              </div>
+
+              <div>
+                <p class="prodName">Bacheca del mese</p>
+                <p class="prodDesc">
+                  Ti prendi uno spazio nel mese successivo per pubblicare
+                  un pensiero, un mini-saggio, un disegno o un manifesto.
+                </p>
+              </div>
+
+              <div class="prodFooter">
+                <div class="tag">1 al mese</div>
+                <a class="btn btn-accent" href="#" onclick="requestItem('Bacheca del mese'); return false;">💎 Richiedi</a>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="sectionTitle">Coming soon</div>
+          <p class="sectionSub">
+            Qui atterrano le prossime opzioni quando le aggiungi (e quando il gruppo è pronto a soffrire).
+          </p>
+
+          <div class="hintBox">
+            <b>Pro tip:</b> quando aggiungi nuove voci, dimmelo e ti preparo le card “identiche” a queste,
+            così lo Shop resta sempre premium e coerente.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function requestItem(name){
+      alert("Richiesta inviata (più o meno): " + name + "\\n\\nPer ora scrivi nel gruppo o al Master per confermare.");
+    }
+  </script>
+</body>
+</html>
