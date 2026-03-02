@@ -49,7 +49,42 @@
       pointer-events:none;
       z-index:0;
     }
+.infoBtn{
+  position:absolute;
+  top:16px;
+  right:16px;
 
+  width:34px;
+  height:34px;
+  border-radius:12px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-weight:700;
+  font-size:15px;
+  text-decoration:none;
+
+  color:rgba(255,255,255,.85);
+
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);
+
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+
+  transition: all .15s ease;
+}
+
+.infoBtn:hover{
+  background:rgba(255,255,255,.16);
+  transform:translateY(-1px);
+}
+
+.infoBtn:active{
+  transform:scale(.95);
+}
     .wrap{
       position:relative;
       z-index:1;
@@ -226,8 +261,11 @@
     <div class="stack">
 
       <!-- CARD 1: Titolo -->
-      <div class="card">
+      <div class="card" style="position:relative;">
         <div class="cardPad">
+          <a href="info.html" class="infoBtn" aria-label="Informazioni MusicLeague">
+            i
+          </a>
           <div class="titleRow">
             <div class="appIcon"><span>🎶</span></div>
             <h1>MusicLeague</h1>
@@ -381,6 +419,7 @@
   </script>
 </body>
 </html>
+
 
 
 
